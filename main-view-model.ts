@@ -246,6 +246,7 @@ export class TestBrokerViewModel extends observable.Observable {
                 //call eval indirectly to execute the scripts in the global scope
                 var geval = eval;
                 geval(script.contents);
+                this.completeLoading(script.url);
             }
         });
 
@@ -333,6 +334,21 @@ export class TestBrokerViewModel extends observable.Observable {
             if (!global.document.getElementById) {
                 global.document.getElementById = id => null;
             }
+        } else if (url.indexOf('chai') !== -1) {
+            global.__shim_require = global.require;
+            global.require = function() {
+                throw Error();
+            }
+
+            global.window = global;
+        }
+    }
+
+    private completeLoading(url: string) {
+        if (url.indexOf('chai') !== -1) {
+            delete global.window;
+            global.require = global.__shim_require;
+            delete global.__shim_require;
         }
     }
 }
