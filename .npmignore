@@ -1,0 +1,16 @@
+.idea
+.gitattributes
+.gitmodules
+*.sublime-project
+lint.*
+.jshint*
+.npmignore
+*.tgz
+test-reports.xml
+Gruntfile.js
+tscommand.tmp.txt
+.tscache/
+.vscode/
+definitions/
+*.ts
+*.js.map
