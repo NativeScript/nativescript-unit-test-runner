@@ -1,7 +1,7 @@
 <Page xmlns="http://www.nativescript.org/tns.xsd" loaded="pageLoaded">
     <GridLayout rows="*,auto,8*,auto,auto">
         <GridLayout row="0" columns="*,auto,*" cssClass="title">
-            <Image src="~/tns_modules/unit-test-runner/nativescript.png" stretch="aspectFill" col="1"/>
+            <Image src="~/tns_modules/nativescript-unit-test-runner/nativescript.png" stretch="aspectFill" col="1"/>
         </GridLayout>
 
         <Progress row="1" value="{{ testsRan }}" maxValue="{{ testsTotal }}" cssClass="testProgress"/>
