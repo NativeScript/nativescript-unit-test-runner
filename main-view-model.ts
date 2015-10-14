@@ -95,10 +95,13 @@ export class TestBrokerViewModel extends observable.Observable {
             var foundKarma = false;
             var resolvers = config.ips.map(ip => {
                 var karmaClientUrl = 'http://' + ip + ':' + config.port + '/context.json';
-                console.log('UTR: fetching ' + karmaClientUrl);
-                return http.getString(karmaClientUrl)
-                    .then(() => {
-                        console.log('UTR: got something from ' + ip);
+                console.log('NSUTR: fetching ' + karmaClientUrl);
+                return http.getString({
+                    url: karmaClientUrl,
+                    method: 'GET',
+                    timeout: 3000,
+                }).then(() => {
+                        console.log('NSUTR: found karma at ' + ip);
                         if (!foundKarma) {
                             foundKarma = true;
                             resolve(ip);
@@ -115,8 +118,6 @@ export class TestBrokerViewModel extends observable.Observable {
 
         return successfulResolution
             .then(result => {
-                console.log('UTR: and the results are in...');
-
                 if (result) {
                     this.set('serverInfo', 'found karma at ' + result);
                     this.networkConfig.reachableIp = result;
@@ -130,16 +131,16 @@ export class TestBrokerViewModel extends observable.Observable {
         return err => {
             this.set('serverInfo', message);
             if (err) {
-                console.log('socket.io: ' + err.toString());
+                console.log('NSUTR-socket.io: ' + err.toString());
             }
         }
     }
 
     public connectToKarma() {
-        console.log('UTR: connecting to karma');
+        this.baseUrl = 'http://' + this.networkConfig.reachableIp + ':' + this.networkConfig.port;
+        console.log('NSUTR: connecting to karma at ' + this.baseUrl);
 
         var io = require('./socket.io');
-        this.baseUrl = 'http://' + this.networkConfig.reachableIp + ':' + this.networkConfig.port;
         this.set('serverInfo', 'connecting to ' + this.baseUrl);
         var socket = this.socket = io.connect(this.baseUrl, {
             forceBase64: true
@@ -152,7 +153,7 @@ export class TestBrokerViewModel extends observable.Observable {
         var connected = this.updateBanner('connected');
 
         socket.on('connect', err => {
-            console.log('UTR: connected to karma!!!');
+            console.log('UTR: successfully connected to karma');
 
             connected();
 
@@ -171,7 +172,7 @@ export class TestBrokerViewModel extends observable.Observable {
         socket.on('connect_failed', this.updateBanner('connection failed'));
         socket.on('disconnect', () => this.updateBrowsersInfo([]));
 
-        socket.on('connect_error', data => console.log('socket.io error on connect: ' + data));
+        socket.on('connect_error', data => console.log('NSUTR: socket.io error on connect: ' + data));
 
         socket.on('execute', this.onKarmaExecute.bind(this));
     }
@@ -195,7 +196,7 @@ export class TestBrokerViewModel extends observable.Observable {
 
     public executeTestRun() {
         if (this.executed) {
-            console.log('disregarding second execution');
+            console.log('NSUTR: disregarding second execution');
             return;
         }
         this.executed = true;
@@ -205,7 +206,7 @@ export class TestBrokerViewModel extends observable.Observable {
         this.startEmitted = false;
         this.hasError = false;
         var contextUrl = this.baseUrl + '/context.json';
-        console.log("Downloading " + contextUrl);
+        console.log("NSUTR: downloading " + contextUrl);
         http.getString(contextUrl)
             .then(content => {
                 var parsedContent: IKarmaContext = JSON.parse(content);
@@ -238,10 +239,10 @@ export class TestBrokerViewModel extends observable.Observable {
     public runTests(testScripts) {
         testScripts.forEach((script, i) => {
             if (script.localPath) {
-                console.log('require script ' + script.url + ' from ' + script.localPath);
+                console.log('NSUTR: require script ' + script.url + ' from ' + script.localPath);
                 require(script.localPath);
             } else {
-                console.log('eval script ' + script.url);
+                console.log('NSUTR: eval script ' + script.url);
                 this.loadShim(script.url);
                 //call eval indirectly to execute the scripts in the global scope
                 var geval = eval;
@@ -293,13 +294,13 @@ export class TestBrokerViewModel extends observable.Observable {
     }
 
     public complete(data?: any) {
-        console.log("Completed test run.");
+        console.log("NSUTR: completed test run.");
         this.set('testsRunning', false);
 
         delete this.start;
 
         this.socketEmit('complete', data || {}, () => {
-            console.log('completeAck');
+            console.log('NSUTR: completeAck');
             this.socketEmit('disconnect');
             setTimeout(() => stopProcess(), 500);
         });
@@ -308,7 +309,7 @@ export class TestBrokerViewModel extends observable.Observable {
     public error(msg: string, url?: string, line?: number) {
         this.hasError = true;
         var fullMsg = url ? msg + '\nat ' + url + (line ? ':' + line : '') : msg;
-        console.log("this.error: " + fullMsg);
+        console.log("NSUTR: this.error: " + fullMsg);
         this.socketEmit('error', fullMsg);
         this.complete();
         return false;
