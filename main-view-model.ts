@@ -153,7 +153,7 @@ export class TestBrokerViewModel extends observable.Observable {
         var connected = this.updateBanner('connected');
 
         socket.on('connect', err => {
-            console.log('UTR: successfully connected to karma');
+            console.log('NSUTR: successfully connected to karma');
 
             connected();
 
@@ -233,11 +233,13 @@ export class TestBrokerViewModel extends observable.Observable {
                     }
                 }));
             })
-            .then(scriptsContents => setTimeout(() => this.runTests(scriptsContents), 0));
+            .then((scriptsContents: IScriptInfo[]) => setTimeout(() => this.runTests(scriptsContents), 0));
     }
 
-    public runTests(testScripts) {
-        testScripts.forEach((script, i) => {
+    public runTests(testScripts: IScriptInfo[]): void {
+        testScripts
+            .filter(script => this.isTestScript(script.url))
+            .forEach(script => {
             if (script.localPath) {
                 console.log('NSUTR: require script ' + script.url + ' from ' + script.localPath);
                 require(script.localPath);
@@ -253,6 +255,10 @@ export class TestBrokerViewModel extends observable.Observable {
 
         console.log('beginning test run');
         this.start(this.config);
+    }
+
+    private isTestScript(url: string): boolean {
+        return url.startsWith('/base/app/tests/') || !url.startsWith('/base/app/');
     }
 
     public updateBrowsersInfo(browsers) {
