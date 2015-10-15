@@ -1,6 +1,6 @@
 {
   "name": "nativescript-unit-test-runner",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "NativeScript unit test runner component.",
   "main": "app.js",
   "scripts": {
@@ -15,5 +15,7 @@
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-ts": "^5.0.1"
+  },
+  "nativescript": {
   }
 }
