@@ -11,6 +11,5 @@ Gruntfile.js
 tscommand.tmp.txt
 .tscache/
 .vscode/
-definitions/
 *.ts
 *.js.map
