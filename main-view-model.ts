@@ -12,6 +12,7 @@ import stopProcess = require('./stop-process');
 interface IHostConfiguration {
     port: number;
     ips: string[];
+    debug: boolean;
 }
 
 interface INetworkConfiguration extends IHostConfiguration {
@@ -28,13 +29,15 @@ interface IScriptInfo {
     contents?: string;
 }
 
-//function enableSocketIoDebugging() {
-//    global.localStorage = {
-//        debug: "*"
-//    };
+function enableSocketIoDebugging() {
+    console.log('enabling socket.io debugging');
 
-//    global.window = global;
-//}
+    global.localStorage = {
+        debug: "*"
+    };
+
+    global.window = global;
+}
 
 var config: INetworkConfiguration = require('./config');
 
@@ -65,7 +68,9 @@ export class TestBrokerViewModel extends observable.Observable {
 
         global.__karma__ = this;
 
-        //enableSocketIoDebugging();
+        if (config.debug) {
+            enableSocketIoDebugging();
+        }
         //debugger;
 
         this.testResults = new observableArray.ObservableArray();
@@ -240,21 +245,26 @@ export class TestBrokerViewModel extends observable.Observable {
         testScripts
             .filter(script => this.isTestScript(script.url))
             .forEach(script => {
-            if (script.localPath) {
-                console.log('NSUTR: require script ' + script.url + ' from ' + script.localPath);
-                require(script.localPath);
-            } else {
-                console.log('NSUTR: eval script ' + script.url);
-                this.loadShim(script.url);
-                //call eval indirectly to execute the scripts in the global scope
-                var geval = eval;
-                geval(script.contents);
-                this.completeLoading(script.url);
-            }
-        });
-
-        console.log('beginning test run');
-        this.start(this.config);
+                try {
+                    if (script.localPath) {
+                        console.log('NSUTR: require script ' + script.url + ' from ' + script.localPath);
+                        require(script.localPath);
+                    } else {
+                        console.log('NSUTR: eval script ' + script.url);
+                        this.loadShim(script.url);
+                        //call eval indirectly to execute the scripts in the global scope
+                        var geval = eval;
+                        geval(script.contents);
+                        this.completeLoading(script.url);
+                    }
+                } catch (err) {
+                    this.error(err.toString(), script.localPath || script.url, err.lineNumber || 0);
+                }
+            });
+        if (!this.hasError) {
+            console.log('NSUTR: beginning test run');
+            this.start(this.config);
+        }
     }
 
     private isTestScript(url: string): boolean {
@@ -262,7 +272,6 @@ export class TestBrokerViewModel extends observable.Observable {
     }
 
     public updateBrowsersInfo(browsers) {
-        //console.dir(browsers);
     }
 
     public start(cfg: any) {
@@ -316,7 +325,14 @@ export class TestBrokerViewModel extends observable.Observable {
         this.hasError = true;
         var fullMsg = url ? msg + '\nat ' + url + (line ? ':' + line : '') : msg;
         console.log("NSUTR: this.error: " + fullMsg);
-        this.socketEmit('error', fullMsg);
+        this.result({
+            id: url,
+            description: `${url} at line ${line}` || "",
+            log: [msg],
+            time: 0,
+            success: false,
+            suite: [],
+        })
         this.complete();
         return false;
     }
@@ -363,6 +379,6 @@ export class TestBrokerViewModel extends observable.Observable {
 export var mainViewModel = new TestBrokerViewModel();
 
 require('application').onUncaughtError = error => {
-    console.log("!!!!!!!!!!!!!!!!!!!!!!!error!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    console.log("NSUTR: uncaught error");
     mainViewModel.error(error.message);
 }
