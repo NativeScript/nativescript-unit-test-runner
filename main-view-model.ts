@@ -12,7 +12,10 @@ import stopProcess = require('./stop-process');
 interface IHostConfiguration {
     port: number;
     ips: string[];
-    debug: boolean;
+    options: {
+        debugBrk?: boolean;
+        debugTransport?: boolean;
+    }
 }
 
 interface INetworkConfiguration extends IHostConfiguration {
@@ -40,6 +43,7 @@ function enableSocketIoDebugging() {
 }
 
 var config: INetworkConfiguration = require('./config');
+config.options = config.options || {}
 
 export class TestBrokerViewModel extends observable.Observable {
     private startEmitted: boolean;
@@ -68,7 +72,7 @@ export class TestBrokerViewModel extends observable.Observable {
 
         global.__karma__ = this;
 
-        if (config.debug) {
+        if (config.options.debugTransport) {
             enableSocketIoDebugging();
         }
         //debugger;
@@ -263,6 +267,11 @@ export class TestBrokerViewModel extends observable.Observable {
             });
         if (!this.hasError) {
             console.log('NSUTR: beginning test run');
+            if (config.options.debugBrk) {
+                /// HINT: If you need to place breakpoints in your tests, navigate to your test files in the Sources panel.
+                /// Hit the 'Resume script execution' button or F8 to continue to your tests.
+                debugger;
+            }
             this.start(this.config);
         }
     }
