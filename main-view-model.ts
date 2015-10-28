@@ -60,16 +60,6 @@ export class TestBrokerViewModel extends observable.Observable {
     constructor() {
         super();
 
-        // used in engine.io-parser
-        global.navigator = {
-            userAgent: 'nativescript',
-        };
-        global.document = {
-            documentElement: {
-                style: {}
-            }
-        };
-
         global.__karma__ = this;
 
         if (config.options.debugTransport) {
@@ -149,6 +139,16 @@ export class TestBrokerViewModel extends observable.Observable {
         this.baseUrl = 'http://' + this.networkConfig.reachableIp + ':' + this.networkConfig.port;
         console.log('NSUTR: connecting to karma at ' + this.baseUrl);
 
+        // shims for engine.io-parser
+        global.navigator = {
+            userAgent: 'nativescript',
+        };
+        global.document = {
+            documentElement: {
+                style: {}
+            }
+        };
+
         var io = require('./socket.io');
         this.set('serverInfo', 'connecting to ' + this.baseUrl);
         var socket = this.socket = io.connect(this.baseUrl, {
@@ -163,6 +163,9 @@ export class TestBrokerViewModel extends observable.Observable {
 
         socket.on('connect', err => {
             console.log('NSUTR: successfully connected to karma');
+
+            delete global.navigator;
+            delete global.document;
 
             connected();
 
@@ -354,17 +357,10 @@ export class TestBrokerViewModel extends observable.Observable {
 
     private loadShim(url: string) {
         if (url.indexOf('mocha') !== -1) {
-            if (!global.window) {
-                global.window = global;
-            }
-            if (!global.location) {
-                global.location = {};
-            }
-            if (!global.location.href) {
-                global.location.href = '/';
-            }
-            if (!global.document.getElementById) {
-                global.document.getElementById = id => null;
+            global.window = global;
+            global.location = { href: '/' };
+            global.document = {
+                getElementById: id => null
             }
         } else if (url.indexOf('chai') !== -1) {
             global.__shim_require = global.require;
@@ -381,6 +377,11 @@ export class TestBrokerViewModel extends observable.Observable {
     }
 
     private completeLoading(url: string) {
+        if (url.indexOf('mocha') !== -1) {
+            delete global.window;
+            //delete global.location;
+            delete global.document;
+        }
         if (url.indexOf('chai') !== -1) {
             delete global.window;
             global.require = global.__shim_require;
