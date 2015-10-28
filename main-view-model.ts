@@ -371,8 +371,12 @@ export class TestBrokerViewModel extends observable.Observable {
             global.require = function() {
                 throw Error();
             }
-
             global.window = global;
+        } else if (url.indexOf('qunit.js') !== -1) {
+            global.define = function (factory) {
+                global.QUnit = factory();
+            }
+            global.define.amd = true;
         }
     }
 
@@ -381,6 +385,8 @@ export class TestBrokerViewModel extends observable.Observable {
             delete global.window;
             global.require = global.__shim_require;
             delete global.__shim_require;
+        } else if (url.indexOf('qunit.js') !== -1) {
+            delete global.define;
         }
     }
 }
