@@ -17,5 +17,9 @@
     "grunt-ts": "^5.0.1"
   },
   "nativescript": {
+    "platforms": {
+        "android": "1.6.0",
+        "ios": "1.6.0"
+    }
   }
 }
