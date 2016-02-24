@@ -17,9 +17,7 @@ interface Error {
 // compat for TypeScript 1.5.3
 // if you use with --target es3 or --target es5 and use below definitions,
 // use the lib.es6.d.ts that is bundled with TypeScript 1.5.3.
-interface MapConstructor {}
 interface WeakMapConstructor {}
-interface SetConstructor {}
 interface WeakSetConstructor {}
 
 /************************************************
@@ -28,7 +26,7 @@ interface WeakSetConstructor {}
 *                                               *
 ************************************************/
 declare var process: NodeJS.Process;
-declare var global: NodeJS.Global;
+declare var global: any;
 
 declare var __filename: string;
 declare var __dirname: string;
@@ -51,7 +49,7 @@ interface NodeRequire extends NodeRequireFunction {
     main: any;
 }
 
-declare var require: NodeRequire;
+declare var require: NativeScriptRequire;
 
 interface NodeModule {
     exports: any;
@@ -63,7 +61,7 @@ interface NodeModule {
     children: any[];
 }
 
-declare var module: NodeModule;
+declare var module: NativeScriptModule;
 
 // Same as module.exports
 declare var exports: any;

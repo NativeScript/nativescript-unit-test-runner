@@ -1,2 +1,3 @@
-import {application} from "application";
+import * as application from "application";
+application.cssFile = "./tns_modules/nativescript-unit-test-runner/app.css";
 application.start({ moduleName: "./tns_modules/nativescript-unit-test-runner/main-page" });

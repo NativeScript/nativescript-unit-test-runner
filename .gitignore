@@ -31,3 +31,5 @@ npm-debug.log
 node_modules
 !preuninstall.js
 !postinstall.js
+!Gruntfile.js
+.d.ts
