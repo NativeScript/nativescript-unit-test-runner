@@ -13,3 +13,4 @@ tscommand.tmp.txt
 .vscode/
 *.ts
 *.js.map
+definitions
