@@ -1,0 +1,104 @@
+{
+  "name": "tns-core-modules",
+  "description": "Telerik NativeScript Core Modules",
+  "version": "1.6.2",
+  "homepage": "https://www.nativescript.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NativeScript/NativeScript/commit/a3b688a3b9000497a1ab153d45df3f06b0ba3bc5"
+  },
+  "files": [
+    "**/*.*",
+    "**/*",
+    "!.baseDir.*",
+    "!node-tests/",
+    "!apps/"
+  ],
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "chai": "3.2.0",
+    "grunt": "0.4.5",
+    "grunt-contrib-clean": "0.6.0",
+    "grunt-contrib-copy": "git+https://github.com/ErjanGavalji/grunt-contrib-copy.git#1c976a133210be4ce8c96313f5daf14833f7f8f9",
+    "grunt-env": "0.4.4",
+    "grunt-exec": "0.4.6",
+    "grunt-mkdir": "0.1.2",
+    "grunt-multi-dest": "1.0.0",
+    "grunt-shell": "1.1.2",
+    "grunt-simple-mocha": "0.4.0",
+    "grunt-ts": "5.3.2",
+    "grunt-typedoc": "0.2.3",
+    "grunt-untar": "0.0.1",
+    "mocha": "2.2.5",
+    "shelljs": "0.5.3",
+    "grunt-tslint": "3.0.0",
+    "time-grunt": "^1.3.0",
+    "tslint": "3.3.0",
+    "typescript": "1.7.5"
+  },
+  "typings": "tns-core-modules.d.ts",
+  "dependencies": {
+    "tns-core-modules-widgets": "1.6.1"
+  },
+  "nativescript": {
+    "platforms": {
+      "ios": "1.6.0",
+      "android": "1.6.0"
+    }
+  },
+  "_id": "tns-core-modules@1.6.2",
+  "_shasum": "05bbf174813448b1cb0f76b1897c72573927fbec",
+  "_resolved": "https://registry.npmjs.org/tns-core-modules/-/tns-core-modules-1.6.2.tgz",
+  "_from": "tns-core-modules@>=1.6.2 <2.0.0",
+  "scripts": {},
+  "_npmVersion": "3.7.1",
+  "_nodeVersion": "5.5.0",
+  "_npmUser": {
+    "name": "hdeshev",
+    "email": "hristo@deshev.com"
+  },
+  "dist": {
+    "shasum": "05bbf174813448b1cb0f76b1897c72573927fbec",
+    "tarball": "http://registry.npmjs.org/tns-core-modules/-/tns-core-modules-1.6.2.tgz"
+  },
+  "maintainers": [
+    {
+      "name": "enchev",
+      "email": "vladimir.enchev@gmail.com"
+    },
+    {
+      "name": "erjangavalji",
+      "email": "erjan.gavalji@gmail.com"
+    },
+    {
+      "name": "fatme",
+      "email": "hfatme@gmail.com"
+    },
+    {
+      "name": "hdeshev",
+      "email": "hristo@deshev.com"
+    },
+    {
+      "name": "ligaz",
+      "email": "stefan.dobrev@gmail.com"
+    },
+    {
+      "name": "nsndeck",
+      "email": "nedyalko.nikolov@telerik.com"
+    },
+    {
+      "name": "sdobrev",
+      "email": "stefan.dobrev@gmail.com"
+    },
+    {
+      "name": "valio.stoychev",
+      "email": "valio.stoychev@gmail.com"
+    }
+  ],
+  "_npmOperationalInternal": {
+    "host": "packages-9-west.internal.npmjs.com",
+    "tmp": "tmp/tns-core-modules-1.6.2.tgz_1456230220993_0.6211725694593042"
+  },
+  "directories": {},
+  "readme": "ERROR: No README data found!"
+}
