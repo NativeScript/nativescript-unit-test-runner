@@ -86,7 +86,7 @@ module.exports = function(grunt) {
 		},
 
 		clean: {
-			src: ["**/*.js*", "!**/*.json", "!postinstall.js", "!preuninstall.ts", "!Gruntfile.js", "!node_modules/**/*", "*.tgz"]
+			src: ["**/*.js*", "!**/*.json", "!postinstall.js", "!preuninstall.js", "!Gruntfile.js", "!node_modules/**/*", "*.tgz"]
 		}
 	});
 
@@ -95,4 +95,9 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-ts");
 
 	grunt.registerTask("default", "ts:devlib");
+	grunt.registerTask("prepare", [
+		"clean",
+		"ts:release_build",
+		"shell:build_package",
+	]);
 };
