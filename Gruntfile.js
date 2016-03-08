@@ -86,7 +86,7 @@ module.exports = function(grunt) {
 		},
 
 		clean: {
-			src: ["**/*.js*", "!**/*.json", "!postinstall.js", "!preuninstall.js", "!Gruntfile.js", "!node_modules/**/*", "*.tgz"]
+			src: ["**/*.js*", "!**/*.json", "!Gruntfile.js", "!node_modules/**/*", "*.tgz"]
 		}
 	});
 
