@@ -41,6 +41,7 @@ module.exports = function(grunt) {
 
 		ts: {
 			options: {
+				passThrough: true,
 				target: 'es5',
 				module: 'commonjs',
 				sourceMap: true,
@@ -48,7 +49,8 @@ module.exports = function(grunt) {
 				removeComments: false,
 				noImplicitAny: false,
 				experimentalDecorators: true,
-				emitDecoratorMetadata: true
+				emitDecoratorMetadata: true,
+				additionalFlags: "--noImplicitUseStrict"
 			},
 
 			devlib: {
