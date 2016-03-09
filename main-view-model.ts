@@ -1,7 +1,4 @@
 /// <reference path="declarations.d.ts"/>
-
-"use strict";
-
 import observable = require("data/observable");
 import observableArray = require('data/observable-array');
 import http = require('http');
