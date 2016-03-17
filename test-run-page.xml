@@ -1,4 +1,4 @@
-<Page xmlns="http://www.nativescript.org/tns.xsd" loaded="pageLoaded">
+<Page xmlns="http://www.nativescript.org/tns.xsd" navigatedTo="pageNavigatedTo">
     <GridLayout rows="*,auto,8*,auto,auto">
         <GridLayout row="0" columns="*,auto,*" cssClass="title">
             <Image src="~/tns_modules/nativescript-unit-test-runner/nativescript.png" stretch="aspectFill" col="1"/>
