@@ -5,6 +5,8 @@ import http = require('http');
 import platform = require('platform');
 import frameModule = require('ui/frame');
 import stopProcess = require('./stop-process');
+import fileSystemModule = require('tns-core-modules/file-system');
+
 
 interface IHostConfiguration {
     port: number;
@@ -97,12 +99,12 @@ export class TestBrokerViewModel extends observable.Observable {
                     method: 'GET',
                     timeout: 3000,
                 }).then(() => {
-                        console.log('NSUTR: found karma at ' + ip);
-                        if (!foundKarma) {
-                            foundKarma = true;
-                            resolve(ip);
-                        }
-                    }, () => undefined)
+                    console.log('NSUTR: found karma at ' + ip);
+                    if (!foundKarma) {
+                        foundKarma = true;
+                        resolve(ip);
+                    }
+                }, () => undefined)
             });
             Promise.all(resolvers)
                 .then(() => {
@@ -227,10 +229,25 @@ export class TestBrokerViewModel extends observable.Observable {
                     if (url.startsWith(appPrefix)) {
                         var paramsStart = url.indexOf('?');
                         var relativePath = url.substring(appPrefix.length, paramsStart);
-                        return Promise.resolve({
-                            url: url,
-                            localPath: '../../' + relativePath,
-                        });
+                        // TODO: Replace files only when we need the coverage information.
+                        return http.getString(this.baseUrl + url)
+                            .then(contents => {
+                                const currentApp = fileSystemModule.knownFolders.currentApp();
+                                const file = currentApp.getFile(relativePath);
+                                return file.writeText(contents)
+                                    .then(result => {
+                                        console.log(`Successfully written file ${file.path}`);
+                                    })
+                                    .catch(err => {
+                                        console.log(`Error while writing file ${file.path}. Coverage may not be correct. Error is: ${err}`);
+                                    })
+                                    .then(() => {
+                                        return {
+                                            url: url,
+                                            localPath: '../../' + relativePath,
+                                        };
+                                    });
+                            });
                     } else {
                         return http.getString(this.baseUrl + url)
                             .then(contents => {
