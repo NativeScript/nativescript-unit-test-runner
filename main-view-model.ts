@@ -1,10 +1,12 @@
 /// <reference path="declarations.d.ts"/>
-import observable = require("data/observable");
-import observableArray = require('data/observable-array');
-import http = require('http');
-import platform = require('platform');
-import frameModule = require('ui/frame');
+import observable = require('tns-core-modules/data/observable');
+import observableArray = require('tns-core-modules/data/observable-array');
+import http = require('tns-core-modules/http');
+import platform = require('tns-core-modules/platform');
+import frameModule = require('tns-core-modules/ui/frame');
 import stopProcess = require('./stop-process');
+
+declare var global: any;
 
 interface IHostConfiguration {
     port: number;
@@ -153,7 +155,7 @@ export class TestBrokerViewModel extends observable.Observable {
         });
 
         function formatName() {
-            return `NativeScript / ${ platform.device.sdkVersion } (${ platform.device.osVersion }; ${ platform.device.model })`;
+            return `NativeScript / ${platform.device.sdkVersion} (${platform.device.osVersion}; ${platform.device.model})`;
         }
 
         var connected = this.updateBanner('connected');
@@ -361,7 +363,7 @@ export class TestBrokerViewModel extends observable.Observable {
             }
         } else if (url.indexOf('chai') !== -1) {
             global.__shim_require = global.require;
-            global.require = function() {
+            global.require = function () {
                 throw Error();
             }
             global.window = global;
