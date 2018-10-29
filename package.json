@@ -27,6 +27,16 @@
     "platforms": {
       "android": "1.6.0",
       "ios": "1.6.0"
-    }
+    },
+    "hooks": [
+      {
+        "type": "after-prepare",
+        "script": "./lib/after-prepare.js",
+        "inject": "true"
+      }
+    ]
+  },
+  "dependencies": {
+    "nativescript-hook": "0.2.4"
   }
 }
