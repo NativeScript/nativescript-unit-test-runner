@@ -42,7 +42,7 @@ module.exports = function(grunt) {
 		ts: {
 			options: {
 				passThrough: true,
-				target: 'es5',
+				target: 'es6',
 				module: 'commonjs',
 				sourceMap: true,
 				declaration: false,
@@ -54,7 +54,7 @@ module.exports = function(grunt) {
 			},
 
 			devlib: {
-				src: ["**/*.ts", "!node_modules/**/*.ts", "!declarations.d.ts"],
+				src: ["**/*.ts", "!node_modules/**/*.ts"],
 				reference: ".d.ts"
 			},
 
