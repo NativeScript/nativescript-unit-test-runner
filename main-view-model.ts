@@ -14,6 +14,7 @@ interface IHostConfiguration {
     options: {
         debugBrk?: boolean;
         debugTransport?: boolean;
+        appDirectoryRelativePath?: string;
     }
 }
 
@@ -42,7 +43,10 @@ function enableSocketIoDebugging() {
 }
 
 var config: INetworkConfiguration = require('./config');
-config.options = config.options || {}
+config.options = config.options || {};
+if (!config.options.appDirectoryRelativePath) {
+    config.options.appDirectoryRelativePath = "app";
+}
 
 export class TestBrokerViewModel extends observable.Observable {
     private startEmitted: boolean;
@@ -189,13 +193,13 @@ export class TestBrokerViewModel extends observable.Observable {
     }
 
     public viewTestRunDetails() {
-        frameModule.topmost().navigate('run-details');
+        frameModule.getFrameById('root-frame').navigate('run-details');
     }
 
     public beginLocalRun() {
         this.config = this.config || { args: [] };
 
-        frameModule.topmost().navigate('tns_modules/nativescript-unit-test-runner/test-run-page');
+        frameModule.getFrameById('root-frame').navigate('tns_modules/nativescript-unit-test-runner/test-run-page');
     }
 
     public onKarmaExecute(cfg) {
@@ -225,7 +229,7 @@ export class TestBrokerViewModel extends observable.Observable {
             })
             .then(scriptUrls => {
                 return Promise.all(scriptUrls.map((url): Promise<IScriptInfo> => {
-                    var appPrefix = '/base/app/';
+                    var appPrefix = `/base/${config.options.appDirectoryRelativePath}/`;
                     if (url.startsWith(appPrefix)) {
                         var paramsStart = url.indexOf('?');
                         var relativePath = url.substring(appPrefix.length, paramsStart);
@@ -279,7 +283,7 @@ export class TestBrokerViewModel extends observable.Observable {
     }
 
     private isTestScript(url: string): boolean {
-        return url.startsWith('/base/app/tests/') || !url.startsWith('/base/app/');
+        return url.startsWith(`/base/${config.options.appDirectoryRelativePath}/tests/`) || !url.startsWith(`/base/${config.options.appDirectoryRelativePath}/`);
     }
 
     public updateBrowsersInfo(browsers) {
