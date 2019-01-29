@@ -40,27 +40,17 @@ module.exports = function(grunt) {
 		pkg: grunt.file.readJSON("package.json"),
 
 		ts: {
-			options: {
-				passThrough: true,
-				target: 'es6',
-				module: 'commonjs',
-				sourceMap: true,
-				declaration: false,
-				removeComments: false,
-				noImplicitAny: false,
-				experimentalDecorators: true,
-				emitDecoratorMetadata: true,
-				additionalFlags: "--noImplicitUseStrict"
-			},
 
 			devlib: {
-				src: ["**/*.ts", "!node_modules/**/*.ts"],
-				reference: ".d.ts"
+				tsconfig: {
+					passThrough: true
+				}
 			},
 
 			release_build: {
-				src: ["**/*.ts", "!node_modules/**/*.ts", "test/**/*.ts"],
-				reference: ".d.ts",
+				tsconfig: {
+					passThrough: true
+				},
 				options: {
 					sourceMap: false,
 					removeComments: true
