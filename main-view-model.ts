@@ -4,7 +4,6 @@ import observableArray = require('tns-core-modules/data/observable-array');
 import http = require('tns-core-modules/http');
 import platform = require('tns-core-modules/platform');
 import frameModule = require('tns-core-modules/ui/frame');
-import stopProcess = require('./stop-process');
 
 declare var global: any;
 
@@ -103,12 +102,12 @@ export class TestBrokerViewModel extends observable.Observable {
                     method: 'GET',
                     timeout: 3000,
                 }).then(() => {
-                        console.log('NSUTR: found karma at ' + ip);
-                        if (!foundKarma) {
-                            foundKarma = true;
-                            resolve(ip);
-                        }
-                    }, () => undefined)
+                    console.log('NSUTR: found karma at ' + ip);
+                    if (!foundKarma) {
+                        foundKarma = true;
+                        resolve(ip);
+                    }
+                }, () => undefined)
             });
             Promise.all(resolvers)
                 .then(() => {
@@ -332,7 +331,6 @@ export class TestBrokerViewModel extends observable.Observable {
         this.socketEmit('complete', data || {}, () => {
             console.log('NSUTR: completeAck');
             this.socketEmit('disconnect');
-            setTimeout(() => stopProcess(), 500);
         });
     }
 
