@@ -31,3 +31,5 @@ npm-debug.log
 node_modules
 !Gruntfile.js
 .d.ts
+
+platforms/android/nativescript_unit_test_runner.aar
