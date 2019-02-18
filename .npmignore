@@ -14,3 +14,5 @@ tscommand.tmp.txt
 *.ts
 *.js.map
 definitions
+platforms/android/*
+!platforms/android/*.aar
