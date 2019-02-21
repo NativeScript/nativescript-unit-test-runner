@@ -11,13 +11,7 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "noEmitHelpers": true,
-        "noEmitOnError": true,
-        "baseUrl": ".",
-        "paths": {
-            "*": [
-                "./node_modules/*"
-            ]
-        }
+        "noEmitOnError": true
     },
     "exclude": [
         "node_modules/tns-core-modules",

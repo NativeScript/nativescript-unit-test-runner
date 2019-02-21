@@ -7,7 +7,6 @@ lint.*
 .npmignore
 *.tgz
 test-reports.xml
-Gruntfile.js
 tscommand.tmp.txt
 .tscache/
 .vscode/

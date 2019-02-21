@@ -7,7 +7,7 @@
     "test": "exit 0",
     "postinstall": "node postinstall.js",
     "preuninstall": "node preuninstall.js",
-    "prepack": "tsc && tns plugin build"
+    "prepack": "npm i --ignore-scripts && tsc --removeComments --sourceMap false && tns plugin build"
   },
   "repository": {
     "type": "git",
@@ -17,11 +17,6 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@types/node": "8.10.30",
-    "grunt": "0.4.5",
-    "grunt-contrib-clean": "1.0.0",
-    "grunt-contrib-watch": "0.6.1",
-    "grunt-shell": "1.1.2",
-    "grunt-ts": "6.0.0-beta.16",
     "tns-core-modules": "5.1.2",
     "typescript": "2.9.2"
   },
