@@ -103,12 +103,12 @@ export class TestBrokerViewModel extends observable.Observable {
                     method: 'GET',
                     timeout: 3000,
                 }).then(() => {
-                        console.log('NSUTR: found karma at ' + ip);
-                        if (!foundKarma) {
-                            foundKarma = true;
-                            resolve(ip);
-                        }
-                    }, () => undefined)
+                    console.log('NSUTR: found karma at ' + ip);
+                    if (!foundKarma) {
+                        foundKarma = true;
+                        resolve(ip);
+                    }
+                }, () => undefined)
             });
             Promise.all(resolvers)
                 .then(() => {
@@ -231,7 +231,7 @@ export class TestBrokerViewModel extends observable.Observable {
                 return Promise.all(scriptUrls.map((url): Promise<IScriptInfo> => {
                     var appPrefix = `/base/${config.options.appDirectoryRelativePath}/`;
                     if (url.startsWith(appPrefix)) {
-                        var paramsStart = url.indexOf('?');
+                        var paramsStart = url.lastIndexOf('?');
                         var relativePath = url.substring(appPrefix.length, paramsStart);
                         return Promise.resolve({
                             url: url,
@@ -260,12 +260,21 @@ export class TestBrokerViewModel extends observable.Observable {
                         console.log('NSUTR: require script ' + script.url + ' from ' + script.localPath);
                         require(script.localPath);
                     } else {
-                        console.log('NSUTR: eval script ' + script.url);
-                        this.loadShim(script.url);
-                        //call eval indirectly to execute the scripts in the global scope
-                        var geval = eval;
-                        geval(script.contents);
-                        this.completeLoading(script.url);
+                        const queryStringStart = script.url.lastIndexOf('?');
+                        const pathWithoutQueryString = script.url.substring(0, queryStringStart);
+                        const extensionRegex = /\.([^.\/]+)$/;
+                        const fileExtension = extensionRegex.exec(pathWithoutQueryString)[1];
+
+                        if (!fileExtension || fileExtension.toLowerCase() === "js") {
+                            console.log('NSUTR: eval script ' + script.url);
+                            this.loadShim(script.url);
+                            // call eval indirectly to execute the scripts in the global scope
+                            var geval = eval;
+                            geval(script.contents);
+                            this.completeLoading(script.url);
+                        } else {
+                            console.log('NSUTR: ignoring evaluation of script ' + script.url)
+                        }
                     }
                 } catch (err) {
                     this.error(err.toString(), script.localPath || script.url, err.lineNumber || 0);
