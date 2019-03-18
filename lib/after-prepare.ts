@@ -1,8 +1,8 @@
 import * as path from "path";
 import * as fs from "fs";
 
-module.exports = function ($platformsData, $testExecutionService) {
-	if($testExecutionService && $testExecutionService.platform) {
+module.exports = function ($platformsData, $testExecutionService, $options) {
+	if($testExecutionService && $testExecutionService.platform && !$options.bundle) {
 		let platformData = $platformsData.getPlatformData($testExecutionService.platform),
 			projectFilesPath = path.join(platformData.appDestinationDirectoryPath, "app"),
 			packageJsonPath = path.join(projectFilesPath, 'package.json'),
