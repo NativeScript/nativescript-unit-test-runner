@@ -1,8 +1,9 @@
 import * as path from "path";
 import * as fs from "fs";
 
-module.exports = function ($platformsData, $testExecutionService, $options) {
-	if($testExecutionService && $testExecutionService.platform && !$options.bundle) {
+module.exports = function (hookArgs, $platformsData, $testExecutionService) {
+	const bundle = hookArgs && hookArgs.appFilesUpdaterOptions && hookArgs.appFilesUpdaterOptions.bundle;
+	if($testExecutionService && $testExecutionService.platform && !bundle) {
 		let platformData = $platformsData.getPlatformData($testExecutionService.platform),
 			projectFilesPath = path.join(platformData.appDestinationDirectoryPath, "app"),
 			packageJsonPath = path.join(projectFilesPath, 'package.json'),

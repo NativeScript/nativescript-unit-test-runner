@@ -207,10 +207,7 @@ export class TestBrokerViewModel extends Observable {
         };
 
         this.updateView({ serverInfo: `connecting to ${this.baseUrl}`});
-        let io = null;
-        // if (!global.TNS_WEBPACK) {
-            io = require('./socket.io');
-        // }
+        let io = require('./socket.io');
         const socket = this.socket = io.connect(this.baseUrl, { forceBase64: true });
 
         socket.on('connect', err => {
