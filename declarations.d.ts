@@ -44,6 +44,7 @@ interface IScriptInfo {
     localPath?: string;
     contents?: string;
     type?: ScriptTypes;
+    shouldEval?: boolean;
 }
 
 interface IKarmaHostResolver {
@@ -55,7 +56,7 @@ interface IKarmaConnectionService {
 }
 
 interface IKarmaFilesService {
-    getServedFilesData(baseUrl: string, config: IHostConfiguration): Promise<IScriptInfo[]>;
+    getServedFilesData(baseUrl: string): Promise<IScriptInfo[]>;
 }
 
 interface ITestExecutionService {

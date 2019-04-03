@@ -30,12 +30,7 @@ export class TestExecutionService implements ITestExecutionService {
                 require(script.localPath);
             }
         } else {
-            const queryStringStart = script.url.lastIndexOf('?');
-            const pathWithoutQueryString = script.url.substring(0, queryStringStart);
-            const extensionRegex = /\.([^.\/]+)$/;
-            const fileExtension = extensionRegex.exec(pathWithoutQueryString)[1];
-
-            if (!fileExtension || fileExtension.toLowerCase() === "js") {
+            if (script.shouldEval) {
                 console.log('NSUTR: eval script ' + script.url);
                 this.loadShim(script.url);
                 //call eval indirectly to execute the scripts in the global scope

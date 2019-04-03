@@ -70,7 +70,7 @@ export class TestBrokerViewModel extends Observable {
         this.startEmitted = false;
 
         this.karmaHostResolver = new KarmaHostResolver(http);
-        this.karmaFilesService = new KarmaFilesService(http);
+        this.karmaFilesService = new KarmaFilesService(http, config);
         this.testExecutionService = new TestExecutionService();
 
         this.karmaHostResolver.resolveKarmaHost(config.ips, config.port)
@@ -110,7 +110,7 @@ export class TestBrokerViewModel extends Observable {
 
         this.set('goToTestsText', 'View Test Run');
 
-        this.karmaFilesService.getServedFilesData(this.baseUrl, config)
+        this.karmaFilesService.getServedFilesData(this.baseUrl)
             .then((scriptsContents: IScriptInfo[]) => setTimeout(() => this.runTests(scriptsContents), 0));
     }
 
