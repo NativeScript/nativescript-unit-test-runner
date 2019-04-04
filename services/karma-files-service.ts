@@ -1,10 +1,21 @@
 export class KarmaFilesService {
-    constructor(private http) { }
+    private extensionRegex = /\.([^.\/]+)$/;
+    private appPrefix = null;
+    private testsPrefix = null;
+    private nodeModulesPrefix = null;
+    private bundle = false;
 
-    public getServedFilesData(baseUrl: string, config: IHostConfiguration): Promise<IScriptInfo[]> {
+    constructor(private http, config: IHostConfiguration) {
+        this.appPrefix = `/base/${config.options.appDirectoryRelativePath}/`;
+        this.testsPrefix = `/base/${config.options.appDirectoryRelativePath}/tests`;
+        this.nodeModulesPrefix = `/base/node_modules/`;
+        this.bundle = config.options.bundle;
+    }
+
+    public getServedFilesData(baseUrl: string): Promise<IScriptInfo[]> {
         const contextUrl = `${baseUrl}/context.json`;
         console.log("NSUTR: downloading " + contextUrl);
-        const bundle = config && config.options && config.options.bundle;
+       
         const result = this.http.getString(contextUrl)
             .then(content => {
                 var parsedContent: IKarmaContext = JSON.parse(content);
@@ -12,15 +23,12 @@ export class KarmaFilesService {
             })
             .then(scriptUrls => {
                 return Promise.all(scriptUrls.map((url): Promise<IScriptInfo> => {
-                    var appPrefix = `/base/${config.options.appDirectoryRelativePath}/`;
-                    const type = this.getScriptType(url, config);
-                    if (!bundle && url.startsWith(appPrefix)) {
-                        var paramsStart = url.indexOf('?');
-                        var relativePath = url.substring(appPrefix.length, paramsStart);
+                    const { extension, localPath, type } = this.getScriptData(url);
+                    if (localPath) {
                         return Promise.resolve({
                             url,
                             type,
-                            localPath: '../../../' + relativePath,
+                            localPath,
                         });
                     } else {
                         return this.http.getString(baseUrl + url)
@@ -28,7 +36,8 @@ export class KarmaFilesService {
                                 return {
                                     url,
                                     type,
-                                    contents
+                                    contents,
+                                    shouldEval: !extension || extension.toLowerCase() === "js"
                                 };
                             });
                     }
@@ -38,15 +47,43 @@ export class KarmaFilesService {
         return result;
     }
 
-    private getScriptType(url: string, config: IHostConfiguration): ScriptTypes {
+    private getScriptData(url: string): { extension: string, localPath: string, type: ScriptTypes } {
+        const queryStringStartIndex = url.lastIndexOf('?');
+        const pathWithoutQueryString = url.substring(0, queryStringStartIndex);
+        const extension = this.extensionRegex.exec(pathWithoutQueryString)[1];
+
+        const type = this.getScriptType(url);
+
+        let localPath = null;
+        if (!this.bundle && url.startsWith(this.appPrefix)) {
+            localPath = this.getScriptLocalPath(url, extension);
+        }
+
+        return { extension, localPath, type };
+    }
+
+    private getScriptType(url: string): ScriptTypes {
         let type = ScriptTypes.CodeUnderTestType;
 
-        if (url.startsWith(`/base/${config.options.appDirectoryRelativePath}/tests`)) {
+        if (url.startsWith(this.testsPrefix)) {
             type = ScriptTypes.TestType;
-        } else if (url.startsWith(`/base/node_modules/`)) {
+        } else if (url.startsWith(this.nodeModulesPrefix)) {
             type = ScriptTypes.FrameworkAdapterType;
         }
 
         return type;
+    }
+
+    private getScriptLocalPath(url: string, scriptExtension: string): string {
+        let localPath = null;
+        const queryStringStartIndex = url.lastIndexOf('?');
+        const relativePath = url.substring(this.appPrefix.length, queryStringStartIndex);
+        localPath = '../../../' + relativePath;
+
+        if (scriptExtension === "ts") {
+            localPath = localPath.substring(0, localPath.length - 2) + "js";
+        }
+
+        return localPath;
     }
 }
