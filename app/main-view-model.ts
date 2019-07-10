@@ -1,4 +1,4 @@
-/// <reference path="./declarations.d.ts"/>
+/// <reference path="../declarations.d.ts"/>
 import { Observable } from "tns-core-modules/data/observable";
 import { ObservableArray } from "tns-core-modules/data/observable-array";
 import * as http from "tns-core-modules/http";
@@ -21,7 +21,7 @@ function enableSocketIoDebugging() {
     global.window = global;
 }
 
-var config: INetworkConfiguration = require('./config');
+var config: INetworkConfiguration = require('../config');
 config.options = config.options || {};
 if (!config.options.appDirectoryRelativePath) {
     config.options.appDirectoryRelativePath = "app";
@@ -207,7 +207,7 @@ export class TestBrokerViewModel extends Observable {
         };
 
         this.updateView({ serverInfo: `connecting to ${this.baseUrl}`});
-        let io = require('./socket.io');
+        let io = require('../socket.io');
         const socket = this.socket = io.connect(this.baseUrl, { forceBase64: true });
 
         socket.on('connect', err => {
