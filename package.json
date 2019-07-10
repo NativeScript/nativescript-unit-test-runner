@@ -1,6 +1,6 @@
 {
   "name": "nativescript-unit-test-runner",
-  "version": "0.6.4",
+  "version": "0.7.0",
   "description": "NativeScript unit test runner component.",
   "main": "app.js",
   "scripts": {
@@ -29,7 +29,12 @@
       {
         "type": "after-prepare",
         "script": "./lib/after-prepare.js",
-        "inject": "true"
+        "inject": true
+      },
+      {
+        "type": "before-liveSync",
+        "script": "lib/before-liveSync.js",
+        "inject": true
       }
     ]
   },
