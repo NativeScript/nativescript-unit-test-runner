@@ -1,3 +1,1 @@
-﻿declare function killProcess();
-
-export = killProcess;
+﻿export function killProcess();

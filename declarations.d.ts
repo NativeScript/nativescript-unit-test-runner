@@ -1,4 +1,5 @@
-﻿declare const enum ScriptTypes {
+﻿/// <reference path="./node_modules/@nativescript/core/global-types.d.ts" />
+declare const enum ScriptTypes {
     TestType, // from tests folder
     CodeUnderTestType, // from app folder
     FrameworkAdapterType // from node_modules

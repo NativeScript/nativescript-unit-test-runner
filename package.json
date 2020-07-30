@@ -1,13 +1,13 @@
 {
   "name": "nativescript-unit-test-runner",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "NativeScript unit test runner component.",
   "main": "app.js",
   "scripts": {
     "test": "exit 0",
     "postinstall": "node postinstall.js",
     "preuninstall": "node preuninstall.js",
-    "prepack": "npm i --ignore-scripts && tsc --removeComments --sourceMap false && tns plugin build"
+    "prepack": "npm i --ignore-scripts && tsc --removeComments --sourceMap false --project tsconfig.lib.json && tsc --removeComments --sourceMap false && tns plugin build"
   },
   "repository": {
     "type": "git",
@@ -16,14 +16,14 @@
   "author": "Telerik <support@telerik.com>",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@types/node": "8.10.30",
-    "tns-core-modules": "5.1.2",
-    "typescript": "2.9.2"
+    "@types/node": "14.0.27",
+    "@nativescript/core": "rc",
+    "typescript": "3.9.7"
   },
   "nativescript": {
     "platforms": {
-      "android": "1.6.0",
-      "ios": "1.6.0"
+      "android": "5.0.0",
+      "ios": "5.0.0"
     },
     "hooks": [
       {
@@ -39,6 +39,6 @@
     ]
   },
   "dependencies": {
-    "nativescript-hook": "0.2.4"
+    "nativescript-hook": "0.2.5"
   }
 }
