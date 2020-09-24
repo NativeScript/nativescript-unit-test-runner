@@ -78,7 +78,7 @@ export class KarmaFilesService {
         let localPath = null;
         const queryStringStartIndex = url.lastIndexOf('?');
         const relativePath = url.substring(this.appPrefix.length, queryStringStartIndex);
-        localPath = '../../../' + relativePath;
+        localPath = '../../../../' + relativePath;
 
         if (scriptExtension === "ts") {
             localPath = localPath.substring(0, localPath.length - 2) + "js";

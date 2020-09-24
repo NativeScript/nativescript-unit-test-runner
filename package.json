@@ -1,9 +1,10 @@
 {
-  "name": "nativescript-unit-test-runner",
-  "version": "0.7.0",
+  "name": "@nativescript/unit-test-runner",
+  "version": "1.0.1",
   "description": "NativeScript unit test runner component.",
   "main": "app.js",
   "scripts": {
+    "clean": "npx rimraf hooks node_modules package-lock.json && npm run prepack",
     "test": "exit 0",
     "postinstall": "node postinstall.js",
     "preuninstall": "node preuninstall.js",
@@ -16,9 +17,10 @@
   "author": "Telerik <support@telerik.com>",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@types/node": "8.10.30",
-    "tns-core-modules": "5.1.2",
-    "typescript": "2.9.2"
+    "@types/node": "~14.0.27",
+    "@nativescript/core": "rc",
+    "@nativescript/types": "rc",
+    "typescript": "~3.9.0"
   },
   "nativescript": {
     "platforms": {
@@ -39,6 +41,6 @@
     ]
   },
   "dependencies": {
-    "nativescript-hook": "0.2.4"
+    "@nativescript/hook": "~1.0.0"
   }
 }

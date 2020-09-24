@@ -1,8 +1,8 @@
-import vmModule = require("./main-view-model");
+import { mainViewModel } from "./main-view-model";
 
 export function pageNavigatedTo(args) {
     var page = args.object;
-    var broker = vmModule.mainViewModel;
+    var broker = mainViewModel;
     page.bindingContext = broker;
     broker.executeTestRun();
 }

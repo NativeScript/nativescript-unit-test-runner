@@ -12,13 +12,6 @@ interface String {
 declare var exports: any;
 
 declare function exit(exitCode: number): void;
-declare module java {
-    module lang {
-        module System {
-            function exit(exitCode: number): void;
-        }
-    }
-}
 
 interface IHostConfiguration {
     port: number;

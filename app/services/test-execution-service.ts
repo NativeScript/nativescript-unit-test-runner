@@ -24,7 +24,7 @@ export class TestExecutionService implements ITestExecutionService {
         if (script.localPath) {
             console.log('NSUTR: require script ' + script.url + ' from ' + script.localPath);
             // Add this check in order to prevent the following warning from webpack compiler:
-            // WARNING in ../node_modules/nativescript-unit-test-runner/main-view-model.js 204:28-53
+            // WARNING in ../node_modules/@nativescript/unit-test-runner/main-view-model.js 204:28-53
             // Critical dependency: the request of a dependency is an expression
             if (!global.TNS_WEBPACK) {
                 require(script.localPath);
