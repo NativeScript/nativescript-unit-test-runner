@@ -8,7 +8,7 @@
     "test": "exit 0",
     "postinstall": "node postinstall.js",
     "preuninstall": "node preuninstall.js",
-    "prepack": "npm i --ignore-scripts && tsc --removeComments --sourceMap false && tns plugin build"
+    "prepack": "npm i --ignore-scripts && tsc --removeComments --sourceMap false && tsc --removeComments --sourceMap false --project tsconfig.lib.json && tns plugin build"
   },
   "repository": {
     "type": "git",

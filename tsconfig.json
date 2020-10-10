@@ -13,8 +13,6 @@
         "noEmitHelpers": true,
         "noEmitOnError": true
     },
-    "exclude": [
-        "node_modules",
-        "platforms"
-    ]
+    "include": ["app/**/*", "declarations.d.ts", "references.d.ts"],
+    "exclude": ["node_modules", "platforms"]
 }
