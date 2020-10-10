@@ -1,5 +1,3 @@
-function killProcess() {
+export function killProcess() {
     exit(0);
 }
-
-export = killProcess;

@@ -1,6 +1,6 @@
-import vmModule = require("./main-view-model");
+import { mainViewModel} from "./main-view-model";
 function pageLoaded(args) {
     var page = args.object;
-    page.bindingContext = vmModule.mainViewModel;
+    page.bindingContext = mainViewModel;
 }
 exports.pageLoaded = pageLoaded;

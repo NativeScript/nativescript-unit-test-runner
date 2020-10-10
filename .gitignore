@@ -26,6 +26,7 @@ scratch/
 .settings/
 .vscode/
 test-reports.xml
+package-lock.json
 
 npm-debug.log
 node_modules

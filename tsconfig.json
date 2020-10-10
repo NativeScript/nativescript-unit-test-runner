@@ -1,11 +1,11 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
-        "target": "es5",
+        "module": "esnext",
+        "target": "es2017",
+        "moduleResolution": "node",
         "lib": [
             "es6",
-            "dom",
-            "es2015.iterable"
+            "dom"
         ],
         "noImplicitUseStrict": true,
         "experimentalDecorators": true,
@@ -13,8 +13,6 @@
         "noEmitHelpers": true,
         "noEmitOnError": true
     },
-    "exclude": [
-        "node_modules/tns-core-modules",
-        "platforms"
-    ]
+    "include": ["app/**/*", "declarations.d.ts", "references.d.ts"],
+    "exclude": ["node_modules", "platforms"]
 }
