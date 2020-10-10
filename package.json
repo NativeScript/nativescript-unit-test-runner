@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/unit-test-runner",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "NativeScript unit test runner component.",
   "main": "app.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "test": "exit 0",
     "postinstall": "node postinstall.js",
     "preuninstall": "node preuninstall.js",
-    "prepack": "npm i --ignore-scripts && tsc --removeComments --sourceMap false && tsc --removeComments --sourceMap false --project tsconfig.lib.json && tns plugin build"
+    "prepack": "npm i --ignore-scripts && tsc --removeComments --sourceMap false && tsc --removeComments --sourceMap false --project tsconfig.lib.json"
   },
   "repository": {
     "type": "git",
