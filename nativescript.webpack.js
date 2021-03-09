@@ -31,7 +31,7 @@ function setupKarmaBuild(config, env, webpack) {
   config.optimization.clear();
 
   config.plugins.delete('WatchStatePlugin')
-  config.plugins.delete('CleanWebpackPlugin')
+  // config.plugins.delete('CleanWebpackPlugin')
 
 
   // config.output.delete('libraryTarget')
@@ -42,6 +42,7 @@ function setupKarmaBuild(config, env, webpack) {
 
   config.output.set('iife', true)
   config.output.set('libraryTarget', 'global')
+  config.output.set('clean', false)
 
   config.module
     .rule('unit-test')
