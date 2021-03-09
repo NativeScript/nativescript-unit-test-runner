@@ -1,13 +1,15 @@
 export class KarmaFilesService {
-    private extensionRegex = /\.([^.\/]+)$/;
-    private appPrefix = null;
-    private testsPrefix = null;
-    private nodeModulesPrefix = null;
-    private bundle = false;
+    private readonly extensionRegex = /\.([^.\/]+)$/;
+    private readonly appPrefix = null;
+    private readonly testsPrefix = null;
+    private readonly absoluteTestsPrefix = null;
+    private readonly nodeModulesPrefix = null;
+    private readonly bundle: boolean = false;
 
     constructor(private http, config: IHostConfiguration) {
         this.appPrefix = `/base/${config.options.appDirectoryRelativePath}/`;
         this.testsPrefix = `/base/${config.options.appDirectoryRelativePath}/tests`;
+        this.absoluteTestsPrefix = `/absolute`;
         this.nodeModulesPrefix = `/base/node_modules/`;
         this.bundle = config.options.bundle;
     }
@@ -15,10 +17,10 @@ export class KarmaFilesService {
     public getServedFilesData(baseUrl: string): Promise<IScriptInfo[]> {
         const contextUrl = `${baseUrl}/context.json`;
         console.log("NSUTR: downloading " + contextUrl);
-       
-        const result = this.http.getString(contextUrl)
+
+        return this.http.getString(contextUrl)
             .then(content => {
-                var parsedContent: IKarmaContext = JSON.parse(content);
+                const parsedContent: IKarmaContext = JSON.parse(content);
                 return parsedContent.files;
             })
             .then(scriptUrls => {
@@ -37,14 +39,12 @@ export class KarmaFilesService {
                                     url,
                                     type,
                                     contents,
-                                    shouldEval: !extension || extension.toLowerCase() === "js"
+                                    shouldEval: !extension || extension.toLowerCase() === "js" || extension.toLowerCase() === "ts"
                                 };
                             });
                     }
                 }));
             });
-
-        return result;
     }
 
     private getScriptData(url: string): { extension: string, localPath: string, type: ScriptTypes } {
@@ -65,7 +65,7 @@ export class KarmaFilesService {
     private getScriptType(url: string): ScriptTypes {
         let type = ScriptTypes.CodeUnderTestType;
 
-        if (url.startsWith(this.testsPrefix)) {
+        if (url.startsWith(this.testsPrefix) || url.startsWith(this.absoluteTestsPrefix)) {
             type = ScriptTypes.TestType;
         } else if (url.startsWith(this.nodeModulesPrefix)) {
             type = ScriptTypes.FrameworkAdapterType;

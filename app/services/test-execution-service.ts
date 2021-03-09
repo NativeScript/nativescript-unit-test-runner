@@ -27,7 +27,8 @@ export class TestExecutionService implements ITestExecutionService {
             // WARNING in ../node_modules/@nativescript/unit-test-runner/main-view-model.js 204:28-53
             // Critical dependency: the request of a dependency is an expression
             if (!global.TNS_WEBPACK) {
-                require(script.localPath);
+              // @ts-ignore
+              require(script.localPath);
             }
         } else {
             if (script.shouldEval) {
