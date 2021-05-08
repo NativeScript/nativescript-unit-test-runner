@@ -1,4 +1,4 @@
-const {relative, extname} = require('path')
+const {relative, extname, sep} = require('path');
 
 /**
  * Unit Test Loader
@@ -8,10 +8,10 @@ const {relative, extname} = require('path')
  * and pre-bundle them with the app.
  */
 module.exports = function unitTestLoader(source, map) {
-  const opts = this.getOptions()
-  const testPathRelativeToAppPath = relative(opts.appPath, this.resourcePath)
+  const opts = this.getOptions();
+  const testPathRelativeToAppPath = relative(opts.appPath, this.resourcePath);
   const ext = extname(testPathRelativeToAppPath);
-  const loadPath = testPathRelativeToAppPath.replace(ext, "")
+  const loadPath = testPathRelativeToAppPath.replace(ext, "").replace(sep, '/'); // use forward slash always
 
   source = `
     // UNIT-TEST-LOADER START
@@ -20,9 +20,10 @@ module.exports = function unitTestLoader(source, map) {
       global.loadModule('${loadPath}');
     } catch(err) {
       console.log('Failed to load test ${loadPath}.', err)
+      throw new Error('Failed to load test ${loadPath}.');
     }
     // UNIT-TEST-LOADER END
   `;
 
   this.callback(null, source, map);
-}
+};
