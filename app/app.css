@@ -1,5 +1,5 @@
 ﻿.landingContainer {
-    background-color: #3C5AFD;
+    background-color: #65ADF1;
 }
 
 .landingBackground {
@@ -19,13 +19,8 @@
     color: white;
     vertical-align: bottom;
 }
-
-.title {
-    background-color: #3C5AFD;
-}
-
 .statusBar {
-    background-color: #3C5AFD;
+    background-color: #65ADF1;
     color: white;
 }
 
