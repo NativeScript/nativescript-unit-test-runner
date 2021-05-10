@@ -79,6 +79,14 @@ function setupUnitTestBuild(config, env, webpack) {
   // config.plugins.delete('CleanWebpackPlugin');
   // config.output.set('clean', false);
 
+  // harmless warnings
+  config.set(
+    'ignoreWarnings',
+    (config.get('ignoreWarnings') || []).concat([
+      /Can't resolve '@nativescript\/unit-test-runner\/app\/stop-process.js'/
+    ])
+  );
+
   const runnerPath = dirname(
     require.resolve('@nativescript/unit-test-runner/package.json')
   );
