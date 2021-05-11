@@ -1,11 +1,10 @@
 ﻿.landingContainer {
-    background-color: #65ADF1;
+    background-color: white;
 }
 
 .landingBackground {
     horizontal-align: center;
     vertical-align: top;
-    opacity: 0.3;
 }
 
 .landingText {
@@ -22,6 +21,7 @@
 .statusBar {
     background-color: #65ADF1;
     color: white;
+    padding: 10;
 }
 
 .statusText {
@@ -69,5 +69,13 @@
 
 .failedTestDetails {
     font-size: 10;
+    color: black;
 }
 
+.btn-primary {
+  background-color: #65ADF1;
+  padding: 8 5 8 5;
+  width: 250;
+  color: white;
+  border-radius: 6;
+}

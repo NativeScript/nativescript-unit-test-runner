@@ -16,7 +16,7 @@
             </StackLayout>
         </StackLayout>
 
-        <Button text="View Test Run Details" tap="{{ viewTestRunDetails }}" row="3"/>
+        <Button text="View Test Run Details" tap="{{ viewTestRunDetails }}" row="3" class="btn-primary" marginBottom="20"/>
 
         <GridLayout row="4" class="statusBar">
             <Label text="{{ serverInfo }}" class="statusText"/>

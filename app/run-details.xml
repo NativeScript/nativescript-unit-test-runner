@@ -1,18 +1,18 @@
 <Page xmlns="http://www.nativescript.org/tns.xsd" loaded="pageLoaded">
     <ListView items="{{ testResults }}">
         <ListView.itemTemplate>
-            <StackLayout cssClass="{{ success, success ? 'passedTest' : 'failedTest' }} ">
+            <StackLayout class="{{ success, success ? 'passedTest' : 'failedTest' }} " padding="10">
                 <Label
                     text="{{ description }}"
-                    cssClass="{{ success, success ? 'passedTestTitle' : 'failedTestTitle' }}"/>
+                    class="{{ success, success ? 'passedTestTitle' : 'failedTestTitle' }}"/>
                 <Label
                     text="{{ time, 'time: ' + time + 'ms' }}"
-                    cssClass="{{ success, success ? 'passedTestDetails' : 'failedTestDetails' }}"/>
+                    class="{{ success, success ? 'passedTestDetails' : 'failedTestDetails' }}"/>
                 <TextView
                     text="{{ log }}"
                     visibility="{{ success, success ? 'collapsed' : 'visible' }}"
                     editable="false"
-                    cssClass="failedTestDetails"/>
+                    class="failedTestDetails"/>
             </StackLayout>
         </ListView.itemTemplate>
     </ListView>

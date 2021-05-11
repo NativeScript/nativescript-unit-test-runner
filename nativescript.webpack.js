@@ -68,6 +68,7 @@ function setupKarmaBuild(config, env, webpack) {
     .loader(join(__dirname, 'loaders', 'unit-test-loader'))
     .options({
       appPath: webpack.Utils.platform.getEntryDirPath(),
+      platform: webpack.Utils.platform.getPlatformName() 
     });
 }
 

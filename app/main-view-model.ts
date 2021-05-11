@@ -202,7 +202,7 @@ export class TestBrokerViewModel extends Observable {
             }
         };
 
-        this.updateView({ serverInfo: `connecting to ${this.baseUrl}`});
+        this.updateView({ serverInfo: `connected to ${this.baseUrl}`});
         let io = require('../socket.io');
         const socket = this.socket = io.connect(this.baseUrl, { forceBase64: true });
 
