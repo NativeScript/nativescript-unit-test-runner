@@ -39,6 +39,11 @@
         "type": "before-liveSync",
         "script": "lib/before-liveSync.js",
         "inject": true
+      },
+      {
+        "type": "before-build-task-args",
+        "script": "lib/before-build-task-args.js",
+        "inject": true
       }
     ]
   },
