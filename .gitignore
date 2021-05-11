@@ -1,7 +1,11 @@
 .DS_Store
 
+test-app/
+
 *.js
 *.js.map
+!nativescript.webpack.js
+!loaders/unit-test-loader.js
 
 coverage
 lib-cov
@@ -33,3 +37,4 @@ node_modules
 .d.ts
 
 platforms/android/nativescript_unit_test_runner.aar
+platforms/android/unit_test_runner.aar
