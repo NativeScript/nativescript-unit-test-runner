@@ -133,13 +133,15 @@ export class TestBrokerViewModel extends Observable {
         this.emitInfoToSocketIfNeeded(data);
         this.emitStartToSocketIfNeeded(data);
 
-        this.updateView({
-            testsRunning: true,
-            testsPassed: 0,
-            testsFailed: 0,
-            testsRan: 0,
-            testsTotal: data.total
-        });
+        if (Object.hasOwnProperty.call(data, "total")) { // data.total only appears when tests are booting up and represent the total number of tests
+            this.updateView({
+                testsRunning: true,
+                testsPassed: 0,
+                testsFailed: 0,
+                testsRan: 0,
+                testsTotal: data.total
+            });
+        }
     }
 
     public result(data) {
@@ -161,11 +163,18 @@ export class TestBrokerViewModel extends Observable {
 
         delete this.start;
 
-        this.emitToSocket('complete', data || {}, () => {
+        let acknowledged = false;
+        const ackFn = () => {
+            if (acknowledged) {
+                return;
+            }
+            acknowledged = true;
             console.log('NSUTR: completeAck');
             this.emitToSocket('disconnect');
             setTimeout(() => killProcess(), 500);
-        });
+        };
+        this.emitToSocket('complete', data || {}, ackFn);
+        setTimeout(ackFn, 1000); // acknowledge is no longer sent by the karma server, so we use a timeout to ensure it runs
     }
 
     public error(msg: string, url?: string, line?: number) {
@@ -202,7 +211,7 @@ export class TestBrokerViewModel extends Observable {
             }
         };
 
-        this.updateView({ serverInfo: `connected to ${this.baseUrl}`});
+        this.updateView({ serverInfo: `connected to ${this.baseUrl}` });
         let io = require('../socket.io');
         const socket = this.socket = io.connect(this.baseUrl, { forceBase64: true });
 
@@ -236,6 +245,10 @@ export class TestBrokerViewModel extends Observable {
 
     private emitToSocket(...args: any[]) {
         if (this.karmaRequestedRun) {
+            if (args.length > 0 && args[0] === 'disconnect') {
+                this.socket.disconnect();
+                return;
+            }
             this.socket.emit.apply(this.socket, arguments);
         }
     }
@@ -246,7 +259,7 @@ export class TestBrokerViewModel extends Observable {
             this.startEmitted = true;
         }
     }
-    
+
     private emitInfoToSocketIfNeeded(data) {
         if (this.startEmitted) {
             this.emitToSocket('info', data);
