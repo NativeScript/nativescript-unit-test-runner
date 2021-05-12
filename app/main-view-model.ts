@@ -172,7 +172,7 @@ export class TestBrokerViewModel extends Observable {
             acknowledged = true;
             console.log('NSUTR: completeAck');
             this.emitToSocket('disconnect');
-            if(typeof __TEST_RUNNER_STAY_OPEN__ === 'undefined' || !__TEST_RUNNER_STAY_OPEN__) {
+            if (typeof __TEST_RUNNER_STAY_OPEN__ === 'undefined' || !__TEST_RUNNER_STAY_OPEN__) {
                 setTimeout(() => killProcess(), 500);
             }
         };
