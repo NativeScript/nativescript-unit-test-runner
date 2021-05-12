@@ -53,6 +53,14 @@ function setupKarmaBuild(config, env, webpack) {
     config.module.rules.delete('angular');
   }
   // config.plugins.delete('CleanWebpackPlugin')
+  config.plugin('DefinePlugin').tap((args) => {
+		args[0] = merge(args[0], {
+			__TEST_RUNNER_STAY_OPEN__: !!env.stayOpen,
+		});
+
+		return args;
+	});
+
 
 
   config.output.delete('path'); // use temp path

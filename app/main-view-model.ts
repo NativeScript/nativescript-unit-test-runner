@@ -6,6 +6,7 @@ import { TestExecutionService } from './services/test-execution-service';
 import { killProcess } from "./stop-process";
 
 declare var global: any;
+declare const __TEST_RUNNER_STAY_OPEN__: boolean;
 
 function enableSocketIoDebugging() {
     console.log('enabling socket.io debugging');
@@ -171,7 +172,9 @@ export class TestBrokerViewModel extends Observable {
             acknowledged = true;
             console.log('NSUTR: completeAck');
             this.emitToSocket('disconnect');
-            setTimeout(() => killProcess(), 500);
+            if(typeof __TEST_RUNNER_STAY_OPEN__ === 'undefined' || !__TEST_RUNNER_STAY_OPEN__) {
+                setTimeout(() => killProcess(), 500);
+            }
         };
         this.emitToSocket('complete', data || {}, ackFn);
         setTimeout(ackFn, 1000); // acknowledge is no longer sent by the karma server, so we use a timeout to ensure it runs
