@@ -70,6 +70,7 @@ function setupKarmaBuild(config, env, webpack) {
 
   config.module
     .rule('unit-test')
+    .enforce('post')
     .include.add(webpack.Utils.platform.getEntryDirPath()).end()
     .test(/\.(ts|js)/)
     .use('unit-test-loader')
