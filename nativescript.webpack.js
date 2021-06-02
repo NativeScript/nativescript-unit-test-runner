@@ -48,10 +48,9 @@ function setupKarmaBuild(config, env, webpack) {
   config.optimization.clear();
 
   config.plugins.delete('WatchStatePlugin');
-  if (config.plugins.has('AngularCompilerPlugin')) {
-    config.plugins.delete('AngularCompilerPlugin');
-    config.module.rules.delete('angular');
-  }
+  config.plugins.delete('AngularCompilerPlugin');
+  config.plugins.delete('AngularWebpackPlugin');
+  config.module.rules.delete('angular');
   // config.plugins.delete('CleanWebpackPlugin')
   config.plugin('DefinePlugin').tap((args) => {
 		args[0] = merge(args[0], {
