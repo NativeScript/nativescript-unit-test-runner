@@ -11,7 +11,7 @@ module.exports = function unitTestLoader(source, map) {
   const opts = this.getOptions();
   const testPathRelativeToAppPath = relative(opts.appPath, this.resourcePath);
   const ext = extname(testPathRelativeToAppPath);
-  const loadPath = testPathRelativeToAppPath.replace(ext, "").replace(sep, '/'); // use forward slash always
+  const loadPath = testPathRelativeToAppPath.replace(ext, "").split(sep).join('/'); // use forward slash always
 
   if (loadPath) {
     const platformExt = loadPath.split('.').slice(-1)[0];
