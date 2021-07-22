@@ -7,7 +7,7 @@ export class KarmaHostResolver implements IKarmaHostResolver {
 
             const resolvers = ips.map(ip => {
                 const karmaClientUrl = `http://${ip}:${port}/context.json`;
-                console.log('NSUTR: fetching ' + karmaClientUrl);
+                console.log(`NSUTR: fetching ${karmaClientUrl}`);
 
                 return this.http.getString({
                     url: karmaClientUrl,
@@ -19,7 +19,10 @@ export class KarmaHostResolver implements IKarmaHostResolver {
                         foundKarma = true;
                         resolve(ip);
                     }
-                }, () => undefined)
+                }, (err) => {
+                    console.log(`Error NSUTR: fetching ${karmaClientUrl}`, err);
+                    return undefined;
+                })
             });
 
             Promise.all(resolvers)
