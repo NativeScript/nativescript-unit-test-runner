@@ -20,7 +20,7 @@ export class KarmaHostResolver implements IKarmaHostResolver {
                         resolve(ip);
                     }
                 }, (err) => {
-                    console.log(`Error NSUTR: fetching ${karmaClientUrl}`, err);
+                    console.log(`NSUTR: error fetching ${karmaClientUrl}`, err);
                     return undefined;
                 })
             });
