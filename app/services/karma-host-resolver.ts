@@ -14,7 +14,7 @@ export class KarmaHostResolver implements IKarmaHostResolver {
                     method: 'GET',
                     timeout: 3000,
                 }).then(() => {
-                    console.log('NSUTR: found karma at ' + ip);
+                    console.log(`NSUTR: found karma at ${ip}`);
                     if (!foundKarma) {
                         foundKarma = true;
                         resolve(ip);
