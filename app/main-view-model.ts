@@ -4,6 +4,7 @@ import { KarmaHostResolver } from './services/karma-host-resolver';
 import { KarmaFilesService } from './services/karma-files-service';
 import { TestExecutionService } from './services/test-execution-service';
 import { killProcess } from "./stop-process";
+import { executeWebpackTests } from "./services/webpack-test-runner";
 
 declare var global: any;
 declare const __TEST_RUNNER_STAY_OPEN__: boolean;
@@ -125,6 +126,8 @@ export class TestBrokerViewModel extends Observable {
     public runTests(scripts: IScriptInfo[]): void {
         const errors = this.testExecutionService.runTests(scripts);
         errors.forEach(err => this.error(err.msg, err.url, err.line));
+
+        executeWebpackTests();
 
         if (!this.hasError) {
             console.log('NSUTR: beginning test run');
