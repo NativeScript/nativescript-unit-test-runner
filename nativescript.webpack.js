@@ -102,7 +102,17 @@ function setupUnitTestBuild(config, env, webpack) {
   config.module.rule('css').include.add(runnerPath);
   config.module.rule('xml').include.add(runnerPath);
   config.module.rule('js').include.add(runnerPath);
-  const filesRegex = getKarmaTestsRegex(webpack);
+  const defaultTsConfig = webpack.Utils.project.getProjectFilePath('tsconfig.spec.json');
+  const testTsEntryPath = join(webpack.Utils.platform.getEntryDirPath(), 'test.ts');
+  const testJsEntryPath = join(webpack.Utils.platform.getEntryDirPath(), 'test.js');
+  const tsConfigPath = env.testTsConfig || (require('fs').existsSync(defaultTsConfig) ? defaultTsConfig : undefined);
+  if (tsConfigPath) {
+    config.when(config.module.rules.has('ts'), (config) => config.module.rule('ts').uses.get('ts-loader').options(merge(config.module.rule('ts').uses.get('ts-loader').get('options'), { configFile: tsConfigPath })));
+    config.when(config.plugins.has('AngularWebpackPlugin'), (config) => config.plugin('AngularWebpackPlugin').tap((args) => {
+      args[0] = merge(args[0], { tsconfig: tsConfigPath });
+      return args[0];
+    }));
+  }
 
   config.plugin('DefinePlugin').tap((args) => {
 		args[0] = merge(args[0], {
@@ -128,9 +138,10 @@ function setupUnitTestBuild(config, env, webpack) {
     .clear()
     .add('@nativescript/core/globals/index.js')
     .add('@nativescript/core/bundle-entry-points')
-    .add('@nativescript/unit-test-runner/app/bundle-app')
+    // .add('@nativescript/unit-test-runner/app/bundle-app')
+    .add(require('fs').existsSync(testTsEntryPath) ? testTsEntryPath : testJsEntryPath)
     // .add('@nativescript/unit-test-runner/app/entry')
-    .add(entryPath);
+    // .add(entryPath);
   if (webpack.Utils.platform.getPlatformName() === 'android') {
     config.entry('bundle')
       .add('@nativescript/core/ui/frame')
