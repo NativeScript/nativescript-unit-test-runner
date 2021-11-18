@@ -110,7 +110,7 @@ function setupUnitTestBuild(config, env, webpack) {
     config.when(config.module.rules.has('ts'), (config) => config.module.rule('ts').uses.get('ts-loader').options(merge(config.module.rule('ts').uses.get('ts-loader').get('options'), { configFile: tsConfigPath })));
     config.when(config.plugins.has('AngularWebpackPlugin'), (config) => config.plugin('AngularWebpackPlugin').tap((args) => {
       args[0] = merge(args[0], { tsconfig: tsConfigPath });
-      return args[0];
+      return args;
     }));
   }
 
@@ -122,24 +122,13 @@ function setupUnitTestBuild(config, env, webpack) {
 		return args;
 	});
 
-  const entryPath = webpack.Utils.virtualModules.addVirtualEntry(config, 'unit-test-runner', `
-      // VIRTUAL ENTRY START
-      const context = require.context(
-        "~/",
-        /* deep: */ true,
-        /* filter: */ ${filesRegex}
-      );
-      global.registerWebpackModules(context);
-      // VIRTUAL ENTRY END
-    `);
-
   // config.entryPoints.clear()
   config.entry('bundle')
     .clear()
     .add('@nativescript/core/globals/index.js')
     .add('@nativescript/core/bundle-entry-points')
     // .add('@nativescript/unit-test-runner/app/bundle-app')
-    .add(require('fs').existsSync(testTsEntryPath) ? testTsEntryPath : testJsEntryPath)
+    .add(require('fs').existsSync(testTsEntryPath) ? testTsEntryPath : testJsEntryPath);
     // .add('@nativescript/unit-test-runner/app/entry')
     // .add(entryPath);
   if (webpack.Utils.platform.getPlatformName() === 'android') {
