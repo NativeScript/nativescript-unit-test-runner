@@ -102,6 +102,10 @@ function setupUnitTestBuild(config, env, webpack) {
   config.module.rule('css').include.add(runnerPath);
   config.module.rule('xml').include.add(runnerPath);
   config.module.rule('js').include.add(runnerPath);
+  if (!env.testTsConfig && env.testTSConfig) {
+    webpack.Utils.log.warn('Mapping env.testTSConfig to env.testTsConfig');
+  }
+  env.testTsConfig = env.testTsConfig || env.testTSConfig;
   const defaultTsConfig = webpack.Utils.project.getProjectFilePath('tsconfig.spec.json');
   const testTsEntryPath = join(webpack.Utils.platform.getEntryDirPath(), 'test.ts');
   const testJsEntryPath = join(webpack.Utils.platform.getEntryDirPath(), 'test.js');
@@ -121,6 +125,25 @@ function setupUnitTestBuild(config, env, webpack) {
 
 		return args;
 	});
+
+  if (env.codeCoverage) {
+    config.module
+      .rule('istanbul-loader')
+      .enforce('post')
+      .include
+      .add(webpack.Utils.platform.getEntryDirPath())
+      .end()
+      .exclude
+      .add(/\.spec\.(tsx?|jsx?)$/)
+      .add(join(webpack.Utils.platform.getEntryDirPath(), 'tests'))
+      .add(join(webpack.Utils.platform.getEntryDirPath(), 'test.ts'))
+      .add(join(webpack.Utils.platform.getEntryDirPath(), 'test.js'))
+      .end()
+      .test(/\.(tsx?|jsx?)/)
+      .use('@jsdevtools/coverage-istanbul-loader')
+      .loader(require.resolve('@jsdevtools/coverage-istanbul-loader'))
+      .options({ esModules: true });
+  }
 
   // config.entryPoints.clear()
   config.entry('bundle')
