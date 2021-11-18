@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/unit-test-runner",
-  "version": "3.0.0-rc.0",
+  "version": "3.0.0-rc.1",
   "description": "NativeScript unit test runner component.",
   "main": "app/main.js",
   "types": "app/main.d.ts",
