@@ -11,6 +11,7 @@ tscommand.tmp.txt
 .tscache/
 .vscode/
 *.ts
+!app/main.d.ts
 *.js.map
 definitions
 platforms/android/*

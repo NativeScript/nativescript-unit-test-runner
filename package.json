@@ -2,7 +2,8 @@
   "name": "@nativescript/unit-test-runner",
   "version": "2.0.5",
   "description": "NativeScript unit test runner component.",
-  "main": "app.js",
+  "main": "app/main.js",
+  "types": "app/main.d.ts",
   "scripts": {
     "clean": "npx rimraf hooks node_modules package-lock.json && npm run prepack",
     "test": "./makeTestApp.sh",

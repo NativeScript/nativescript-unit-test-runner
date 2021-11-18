@@ -8,10 +8,20 @@ import { registerTestRunner } from "./services/webpack-test-runner";
 const context = require.context('./', true, /.*\.(js|css|xml)/)
 global.registerWebpackModules(context);
 
+export interface RunTestAppOptions {
+    runTests?: () => unknown
+}
 
-export { registerTestRunner };
 
-
-export function runApp() {
+export function runTestApp(options: RunTestAppOptions = {}) {
+    if(options?.runTests) {
+        registerTestRunner(() => {
+            try {
+                options.runTests();
+            } catch (e) {
+                console.error('Error loading tests', e);
+            }
+        });
+    }
     Application.run({ moduleName: "bundle-app-root" });
 }
