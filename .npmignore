@@ -16,3 +16,4 @@ tscommand.tmp.txt
 definitions
 platforms/android/*
 !platforms/android/*.aar
+*.tgz
