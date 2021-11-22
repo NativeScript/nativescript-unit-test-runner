@@ -130,7 +130,7 @@ export class TestBrokerViewModel extends Observable {
         try {
             executeWebpackTests();
         } catch (e) {
-            this.error(e.message);
+            this.error(`${e?.message || e}`);
         }
 
         if (!this.hasError) {
