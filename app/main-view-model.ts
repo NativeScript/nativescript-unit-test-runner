@@ -127,7 +127,11 @@ export class TestBrokerViewModel extends Observable {
         const errors = this.testExecutionService.runTests(scripts);
         errors.forEach(err => this.error(err.msg, err.url, err.line));
 
-        executeWebpackTests();
+        try {
+            executeWebpackTests();
+        } catch (e) {
+            this.error(e.message);
+        }
 
         if (!this.hasError) {
             console.log('NSUTR: beginning test run');
