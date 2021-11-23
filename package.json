@@ -49,6 +49,7 @@
     ]
   },
   "dependencies": {
-    "@nativescript/hook": "^2.0.0"
+    "@nativescript/hook": "^2.0.0",
+    "glob-regex": "^0.3.2"
   }
 }

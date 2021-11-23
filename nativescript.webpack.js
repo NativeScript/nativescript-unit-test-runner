@@ -1,12 +1,27 @@
 const { join, dirname } = require('path');
+const { existsSync } = require('fs');
 const { merge } = require('webpack-merge');
+
+function getTestEntrypoint() {
+  const testTsEntryPath = join(webpack.Utils.platform.getEntryDirPath(), 'test.ts');
+  const testJsEntryPath = join(webpack.Utils.platform.getEntryDirPath(), 'test.js');
+  if (existsSync(testTsEntryPath)) {
+    return testTsEntryPath;
+  }
+  if (existsSync(testJsEntryPath)) {
+    return testJsEntryPath;
+  }
+  return null;
+}
 
 /**
  * @param {typeof import("@nativescript/webpack")} webpack
  */
 module.exports = webpack => {
+  if (!getTestEntrypoint()) {
+    return require('./nativescript.webpack.compat')(webpack);
+  }
   webpack.chainWebpack((config, env) => {
-
     if (env.unitTesting) {
       return setupUnitTestBuild(config, env, webpack);
     }
@@ -18,6 +33,12 @@ module.exports = webpack => {
  * @param {typeof import("@nativescript/webpack")} webpack
  */
 function setupUnitTestBuild(config, env, webpack) {
+
+  const testEntrypointPath = getTestEntrypoint();
+  if (!testEntrypointPath) { // this should never happen
+    webpack.Utils.log.error('No test entrypoint found');
+    return;
+  }
   // config.plugins.delete('CleanWebpackPlugin');
   // config.output.set('clean', false);
 
@@ -40,8 +61,6 @@ function setupUnitTestBuild(config, env, webpack) {
   }
   env.testTsConfig = env.testTsConfig || env.testTSConfig;
   const defaultTsConfig = webpack.Utils.project.getProjectFilePath('tsconfig.spec.json');
-  const testTsEntryPath = join(webpack.Utils.platform.getEntryDirPath(), 'test.ts');
-  const testJsEntryPath = join(webpack.Utils.platform.getEntryDirPath(), 'test.js');
   const tsConfigPath = env.testTsConfig || (require('fs').existsSync(defaultTsConfig) ? defaultTsConfig : undefined);
   if (tsConfigPath) {
     config.when(config.module.rules.has('ts'), (config) => config.module.rule('ts').uses.get('ts-loader').options(merge(config.module.rule('ts').uses.get('ts-loader').get('options'), { configFile: tsConfigPath })));
@@ -52,12 +71,12 @@ function setupUnitTestBuild(config, env, webpack) {
   }
 
   config.plugin('DefinePlugin').tap((args) => {
-		args[0] = merge(args[0], {
-			'global.TNS_WEBPACK': true,
-		});
+    args[0] = merge(args[0], {
+      'global.TNS_WEBPACK': true,
+    });
 
-		return args;
-	});
+    return args;
+  });
 
   if (env.codeCoverage) {
     config.module
@@ -84,9 +103,9 @@ function setupUnitTestBuild(config, env, webpack) {
     .add('@nativescript/core/globals/index.js')
     .add('@nativescript/core/bundle-entry-points')
     // .add('@nativescript/unit-test-runner/app/bundle-app')
-    .add(require('fs').existsSync(testTsEntryPath) ? testTsEntryPath : testJsEntryPath);
-    // .add('@nativescript/unit-test-runner/app/entry')
-    // .add(entryPath);
+    .add(testEntrypointPath);
+  // .add('@nativescript/unit-test-runner/app/entry')
+  // .add(entryPath);
   if (webpack.Utils.platform.getPlatformName() === 'android') {
     config.entry('bundle')
       .add('@nativescript/core/ui/frame')
