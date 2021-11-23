@@ -19,6 +19,7 @@ function getTestEntrypoint() {
  */
 module.exports = webpack => {
   if (!getTestEntrypoint()) {
+    webpack.Utils.log.warn('Test entrypoint not found. Loading deprecated @nativescript/unit-test-runner config. Please update your unit testing config.');
     return require('./nativescript.webpack.compat')(webpack);
   }
   webpack.chainWebpack((config, env) => {
