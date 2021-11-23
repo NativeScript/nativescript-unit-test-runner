@@ -2,7 +2,7 @@ const { join, dirname } = require('path');
 const { existsSync } = require('fs');
 const { merge } = require('webpack-merge');
 
-function getTestEntrypoint() {
+function getTestEntrypoint(webpack) {
   const testTsEntryPath = join(webpack.Utils.platform.getEntryDirPath(), 'test.ts');
   const testJsEntryPath = join(webpack.Utils.platform.getEntryDirPath(), 'test.js');
   if (existsSync(testTsEntryPath)) {
@@ -18,7 +18,7 @@ function getTestEntrypoint() {
  * @param {typeof import("@nativescript/webpack")} webpack
  */
 module.exports = webpack => {
-  if (!getTestEntrypoint()) {
+  if (!getTestEntrypoint(webpack)) {
     webpack.Utils.log.warn('Test entrypoint not found. Loading deprecated @nativescript/unit-test-runner config. Please update your unit testing config.');
     return require('./nativescript.webpack.compat')(webpack);
   }
@@ -35,7 +35,7 @@ module.exports = webpack => {
  */
 function setupUnitTestBuild(config, env, webpack) {
 
-  const testEntrypointPath = getTestEntrypoint();
+  const testEntrypointPath = getTestEntrypoint(webpack);
   if (!testEntrypointPath) { // this should never happen
     webpack.Utils.log.error('No test entrypoint found');
     return;
