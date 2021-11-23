@@ -5,6 +5,7 @@ test-app/
 *.js
 *.js.map
 !nativescript.webpack.js
+!nativescript.webpack.compat.js
 !loaders/unit-test-loader.js
 
 coverage
