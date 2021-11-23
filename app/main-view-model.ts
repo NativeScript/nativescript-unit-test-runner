@@ -1,5 +1,5 @@
 /// <reference path="../declarations.d.ts"/>
-import { Observable, ObservableArray, Http, Device, Frame } from "@nativescript/core";
+import { Observable, ObservableArray, Http, Device, Frame, isAndroid } from "@nativescript/core";
 import { KarmaHostResolver } from './services/karma-host-resolver';
 import { KarmaFilesService } from './services/karma-files-service';
 import { TestExecutionService } from './services/test-execution-service';
@@ -20,6 +20,17 @@ function enableSocketIoDebugging() {
 
 var config: INetworkConfiguration = require('../config');
 config.options = config.options || {};
+// For whatever reason, Android emulators sometime struggle to find a 
+// reachable host ip and make a successful call for the `context.json` file. 
+// This happens in the test runner, even though mobile browsers can make successful calls to the 
+// already discovered ips. According to 
+// https://developer.android.com/studio/run/emulator-networking#networkaddresses
+// ip addr: `10.0.2.2` is a special alias to your host loopback interface 
+//          (i.e., 127.0.0.1 on your development machine)
+// adding this ipaddr eases the struggle. (no effect on actual devices)
+if (isAndroid)
+    config.ips = (config.ips || []).concat(['10.0.2.2'])
+
 if (!config.options.appDirectoryRelativePath) {
     config.options.appDirectoryRelativePath = "app";
 }
