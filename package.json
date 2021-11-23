@@ -1,7 +1,7 @@
 {
   "name": "@nativescript/unit-test-runner",
-  "version": "3.0.0-rc.3",
-  "description": "NativeScript unit test runner component.",
+  "version": "3.0.0",
+  "description": "NativeScript unit test runner",
   "main": "app/main.js",
   "types": "app/main.d.ts",
   "scripts": {
@@ -9,7 +9,8 @@
     "test": "./makeTestApp.sh",
     "postinstall": "node postinstall.js",
     "preuninstall": "node preuninstall.js",
-    "prepack": "npm i --ignore-scripts --legacy-peer-deps && tsc --removeComments --sourceMap false && tsc --removeComments --sourceMap false --project tsconfig.lib.json && tns plugin build"
+    "prepack": "npm i --ignore-scripts --legacy-peer-deps && tsc --removeComments --sourceMap false && tsc --removeComments --sourceMap false --project tsconfig.lib.json && tns plugin build",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,7 @@
     "@nativescript/types": "^8.1.0",
     "@nativescript/webpack": "~5.0.0",
     "@types/node": "~14.0.27",
+    "conventional-changelog-cli": "^2.0.34",
     "rimraf": "^3.0.2",
     "typescript": "~4.3.5"
   },
