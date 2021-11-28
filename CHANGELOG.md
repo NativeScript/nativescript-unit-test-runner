@@ -1,3 +1,18 @@
+## [3.0.1](https://github.com/NativeScript/nativescript-unit-test-runner/compare/v3.0.0...v3.0.1) (2021-11-28)
+
+
+### Bug Fixes
+
+* ignore unit test files in core projects ([#54](https://github.com/NativeScript/nativescript-unit-test-runner/issues/54)) ([8905654](https://github.com/NativeScript/nativescript-unit-test-runner/commit/8905654659517d230a83ab18609901c1c1d1287d))
+* IgnorePlugin reference ([694bf7b](https://github.com/NativeScript/nativescript-unit-test-runner/commit/694bf7bdaa7519250f43608570da8f0892c409c4))
+
+
+### Features
+
+* allow webpack test setup to be async ([#55](https://github.com/NativeScript/nativescript-unit-test-runner/issues/55)) ([0e9fbe4](https://github.com/NativeScript/nativescript-unit-test-runner/commit/0e9fbe43141e040c9f0e72263bdefdef0eca8153))
+
+
+
 # [3.0.0](https://github.com/NativeScript/nativescript-unit-test-runner/compare/v2.0.0...v3.0.0) (2021-11-23)
 
 
