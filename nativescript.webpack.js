@@ -25,6 +25,21 @@ module.exports = webpack => {
   webpack.chainWebpack((config, env) => {
     if (env.unitTesting) {
       return setupUnitTestBuild(config, env, webpack);
+    } else {
+      config
+        .plugin("IgnorePlugin|unit_tests")
+        .use(IgnorePlugin, [{
+          checkResource: (resource, context) => {
+            if (context === webpack.Utils.platform.getEntryDirPath()) {
+              if (/(^\.\/test|\.spec)\.(ts|js)$/.test(resource)) {
+                // console.log('ignoring unit test', context, resource);
+                return true;
+              }
+            }
+            return false;
+
+          }
+        }]);
     }
   });
 };
