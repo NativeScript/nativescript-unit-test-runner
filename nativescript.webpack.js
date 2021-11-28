@@ -1,6 +1,7 @@
 const { join, dirname } = require('path');
 const { existsSync } = require('fs');
 const { merge } = require('webpack-merge');
+const { IgnorePlugin } = require('webpack');
 
 function getTestEntrypoint(webpack) {
   const testTsEntryPath = join(webpack.Utils.platform.getEntryDirPath(), 'test.ts');
