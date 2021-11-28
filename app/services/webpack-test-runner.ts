@@ -1,10 +1,10 @@
 let runTests: () => unknown;
 
-export function registerTestRunner(testRunner: () => unknown) {
+export function registerTestRunner(testRunner: () => unknown | Promise<unknown>) {
   runTests = testRunner;
 }
 
 
-export function executeWebpackTests() {
-    runTests?.();
+export async function executeWebpackTests() {
+    await runTests?.();
 }

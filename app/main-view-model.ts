@@ -123,12 +123,12 @@ export class TestBrokerViewModel extends Observable {
             .then((scriptsContents: IScriptInfo[]) => setTimeout(() => this.runTests(scriptsContents), 0));
     }
 
-    public runTests(scripts: IScriptInfo[]): void {
+    public async runTests(scripts: IScriptInfo[]): Promise<void> {
         const errors = this.testExecutionService.runTests(scripts);
         errors.forEach(err => this.error(err.msg, err.url, err.line));
 
         try {
-            executeWebpackTests();
+            await executeWebpackTests();
         } catch (e) {
             this.error(`${e?.message || e}`);
         }

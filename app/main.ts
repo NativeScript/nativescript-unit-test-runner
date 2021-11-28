@@ -13,9 +13,7 @@ export interface RunTestAppOptions {
 
 export function runTestApp(options: RunTestAppOptions = {}) {
   if (options?.runTests) {
-    registerTestRunner(() => {
-      options.runTests();
-    });
+    registerTestRunner(options.runTests);
   }
   Application.run({ moduleName: "bundle-app-root" });
 }
