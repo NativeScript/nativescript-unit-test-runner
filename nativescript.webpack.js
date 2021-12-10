@@ -87,6 +87,21 @@ function setupUnitTestBuild(config, env, webpack) {
     }));
   }
 
+  config.when(config.plugins.has('AngularWebpackPlugin'), (config) => config.plugin('AngularWebpackPlugin').tap((args) => {
+    args[0] = merge(args[0], { jitMode: true });
+    return args;
+  }));
+  config.when(config.module.rules.has('angular-webpack-loader'), (config) => {
+    const options = config.module
+      .rule('angular-webpack-loader')
+      .uses.get('webpack-loader').get('options');
+    config.module
+      .rule('angular-webpack-loader')
+      .uses.get('webpack-loader').options(
+        merge(options, { aot: false, optimize: false })
+      );
+  });
+
   config.plugin('DefinePlugin').tap((args) => {
     args[0] = merge(args[0], {
       'global.TNS_WEBPACK': true,
