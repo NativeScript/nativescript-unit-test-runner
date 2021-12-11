@@ -1,3 +1,12 @@
+## [3.0.2](https://github.com/NativeScript/nativescript-unit-test-runner/compare/v3.0.1...v3.0.2) (2021-12-11)
+
+
+### Features
+
+* disable aot build for angular (use jit instead) ([#56](https://github.com/NativeScript/nativescript-unit-test-runner/issues/56)) ([6d6cecc](https://github.com/NativeScript/nativescript-unit-test-runner/commit/6d6ceccc88af1881cdf645aca190e5131077da21))
+
+
+
 ## [3.0.1](https://github.com/NativeScript/nativescript-unit-test-runner/compare/v3.0.0...v3.0.1) (2021-11-28)
 
 
