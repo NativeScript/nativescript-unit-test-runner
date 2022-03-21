@@ -1,3 +1,12 @@
+## [3.0.3](https://github.com/NativeScript/nativescript-unit-test-runner/compare/v3.0.2...v3.0.3) (2022-03-21)
+
+
+### Bug Fixes
+
+* **android:** properly force quit the application ([#57](https://github.com/NativeScript/nativescript-unit-test-runner/issues/57)) ([a95b505](https://github.com/NativeScript/nativescript-unit-test-runner/commit/a95b505529984710f726e5b91239e4d89d092443))
+
+
+
 ## [3.0.2](https://github.com/NativeScript/nativescript-unit-test-runner/compare/v3.0.1...v3.0.2) (2021-12-11)
 
 
