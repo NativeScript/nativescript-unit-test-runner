@@ -1,3 +1,12 @@
+## [3.0.4](https://github.com/NativeScript/nativescript-unit-test-runner/compare/v3.0.3...v3.0.4) (2022-05-23)
+
+
+### Bug Fixes
+
+* **log:** fetching error ([#59](https://github.com/NativeScript/nativescript-unit-test-runner/issues/59)) ([c10f1e4](https://github.com/NativeScript/nativescript-unit-test-runner/commit/c10f1e466b92a8f0d61e2db4ffcc6a332878bea3))
+
+
+
 ## [3.0.3](https://github.com/NativeScript/nativescript-unit-test-runner/compare/v3.0.2...v3.0.3) (2022-03-21)
 
 
