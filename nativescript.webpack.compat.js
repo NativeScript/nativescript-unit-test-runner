@@ -119,7 +119,11 @@ function setupUnitTestBuild(config, env, webpack) {
         /* deep: */ true,
         /* filter: */ ${filesRegex}
       );
-      global.registerWebpackModules(context);
+      if (typeof global.registerWebpackModules !== 'undefined') {
+        global.registerWebpackModules(context);
+      } else {
+        global.registerBundlerModules(context);
+      }
       // VIRTUAL ENTRY END
     `);
 
