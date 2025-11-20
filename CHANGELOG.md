@@ -1,3 +1,12 @@
+# [4.0.0](https://github.com/NativeScript/nativescript-unit-test-runner/compare/v3.0.4...v4.0.0) (2025-11-20)
+
+
+### Features
+
+* NativeScript v9 support ([b344f63](https://github.com/NativeScript/nativescript-unit-test-runner/commit/b344f639e6b5b7afc7666a9f8a4ebf1321520ae8))
+
+
+
 ## [3.0.4](https://github.com/NativeScript/nativescript-unit-test-runner/compare/v3.0.3...v3.0.4) (2022-05-23)
 
 
