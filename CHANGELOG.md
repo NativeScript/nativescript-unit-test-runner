@@ -1,3 +1,12 @@
+## [4.0.1](https://github.com/NativeScript/nativescript-unit-test-runner/compare/v4.0.0...v4.0.1) (2025-12-03)
+
+
+### Bug Fixes
+
+* use proper ES Module syntax ([#68](https://github.com/NativeScript/nativescript-unit-test-runner/issues/68)) ([64d405a](https://github.com/NativeScript/nativescript-unit-test-runner/commit/64d405a1a0b463b39b3726e64d0bbe1194f87fa0))
+
+
+
 # [4.0.0](https://github.com/NativeScript/nativescript-unit-test-runner/compare/v3.0.4...v4.0.0) (2025-11-20)
 
 
