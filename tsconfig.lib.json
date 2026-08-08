@@ -1,8 +1,0 @@
-{
-    "extends":"./tsconfig.json",
-    "compilerOptions": {
-        "target": "es5",
-        "module": "commonjs"
-    },
-    "include": ["lib/**/*", "postinstall.ts", "preuninstall.ts", "declarations.d.ts"]
-} 

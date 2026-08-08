@@ -1,46 +1,24 @@
-const { join, dirname } = require('path');
-const { existsSync } = require('fs');
-const { merge } = require('webpack-merge');
-const { IgnorePlugin } = require('webpack');
+const { existsSync } = require('node:fs');
+const { join } = require('node:path');
 
 function getTestEntrypoint(webpack) {
-  const testTsEntryPath = join(webpack.Utils.platform.getEntryDirPath(), 'test.ts');
-  const testJsEntryPath = join(webpack.Utils.platform.getEntryDirPath(), 'test.js');
-  if (existsSync(testTsEntryPath)) {
-    return testTsEntryPath;
-  }
-  if (existsSync(testJsEntryPath)) {
-    return testJsEntryPath;
-  }
+  const entryDirPath = webpack.Utils.platform.getEntryDirPath();
+  const testTsEntryPath = join(entryDirPath, 'test.ts');
+  if (existsSync(testTsEntryPath)) return testTsEntryPath;
+  const testJsEntryPath = join(entryDirPath, 'test.js');
+  if (existsSync(testJsEntryPath)) return testJsEntryPath;
   return null;
 }
 
 /**
  * @param {typeof import("@nativescript/webpack")} webpack
  */
-module.exports = webpack => {
-  if (!getTestEntrypoint(webpack)) {
-    webpack.Utils.log.warn('Test entrypoint not found. Loading deprecated @nativescript/unit-test-runner config. Please update your unit testing config.');
-    return require('./nativescript.webpack.compat')(webpack);
-  }
+module.exports = (webpack) => {
   webpack.chainWebpack((config, env) => {
     if (env.unitTesting) {
-      return setupUnitTestBuild(config, env, webpack);
+      setupUnitTestBuild(config, env, webpack);
     } else {
-      config
-        .plugin("IgnorePlugin|unit_tests")
-        .use(IgnorePlugin, [{
-          checkResource: (resource, context) => {
-            if (context === webpack.Utils.platform.getEntryDirPath()) {
-              if (/(^\.\/test|\.spec)\.(ts|js)$/.test(resource)) {
-                // console.log('ignoring unit test', context, resource);
-                return true;
-              }
-            }
-            return false;
-
-          }
-        }]);
+      excludeTestFilesFromBundle(config, webpack);
     }
   });
 };
@@ -49,97 +27,145 @@ module.exports = webpack => {
  * @param {import("webpack-chain")} config
  * @param {typeof import("@nativescript/webpack")} webpack
  */
-function setupUnitTestBuild(config, env, webpack) {
+function excludeTestFilesFromBundle(config, webpack) {
+  const { IgnorePlugin } = require('webpack');
+  config.plugin('IgnorePlugin|unit_tests').use(IgnorePlugin, [
+    {
+      checkResource: (resource, context) => {
+        if (context === webpack.Utils.platform.getEntryDirPath()) {
+          return /(^\.\/test|\.spec)\.(ts|js)$/.test(resource);
+        }
+        return false;
+      },
+    },
+  ]);
+}
 
+/**
+ * @param {import("webpack-chain")} config
+ * @param {typeof import("@nativescript/webpack")} webpack
+ */
+function setupUnitTestBuild(config, env, webpack) {
   const testEntrypointPath = getTestEntrypoint(webpack);
-  if (!testEntrypointPath) { // this should never happen
-    webpack.Utils.log.error('No test entrypoint found');
+  if (!testEntrypointPath) {
+    webpack.Utils.log.error(
+      'No test entrypoint (test.ts or test.js) found in the app source directory. Run `ns test init` to scaffold one.',
+    );
     return;
   }
-  // config.plugins.delete('CleanWebpackPlugin');
-  // config.output.set('clean', false);
 
-  // harmless warnings
-  config.set(
-    'ignoreWarnings',
-    (config.get('ignoreWarnings') || []).concat([
-      /Can't resolve '@nativescript\/unit-test-runner\/app\/stop-process.js'/
-    ])
-  );
+  const shimPath = join(__dirname, 'dist', 'runtime', 'shim.js');
+  if (!existsSync(shimPath)) {
+    webpack.Utils.log.error(
+      '@nativescript/unit-test-runner is not built. Reinstall the package.',
+    );
+    return;
+  }
+  // Bare `vitest` imports in bundled specs resolve to the device-safe shim
+  // (@vitest/runner + @vitest/expect); the full vitest package is Node-only.
+  config.resolve.alias.set('vitest$', shimPath);
 
-  const runnerPath = dirname(
-    require.resolve('@nativescript/unit-test-runner/package.json')
-  );
-  config.module.rule('css').include.add(runnerPath);
-  config.module.rule('xml').include.add(runnerPath);
-  config.module.rule('js').include.add(runnerPath);
   if (!env.testTsConfig && env.testTSConfig) {
     webpack.Utils.log.warn('Mapping env.testTSConfig to env.testTsConfig');
   }
   env.testTsConfig = env.testTsConfig || env.testTSConfig;
-  const defaultTsConfig = webpack.Utils.project.getProjectFilePath('tsconfig.spec.json');
-  const tsConfigPath = env.testTsConfig || (require('fs').existsSync(defaultTsConfig) ? defaultTsConfig : undefined);
+  const defaultTsConfig =
+    webpack.Utils.project.getProjectFilePath('tsconfig.spec.json');
+  const tsConfigPath =
+    env.testTsConfig || (existsSync(defaultTsConfig) ? defaultTsConfig : undefined);
   if (tsConfigPath) {
-    config.when(config.module.rules.has('ts'), (config) => config.module.rule('ts').uses.get('ts-loader').options(merge(config.module.rule('ts').uses.get('ts-loader').get('options'), { configFile: tsConfigPath })));
-    config.when(config.plugins.has('AngularWebpackPlugin'), (config) => config.plugin('AngularWebpackPlugin').tap((args) => {
-      args[0] = merge(args[0], { tsconfig: tsConfigPath });
-      return args;
-    }));
+    config.when(config.module.rules.has('ts'), (config) =>
+      config.module
+        .rule('ts')
+        .uses.get('ts-loader')
+        .options({
+          ...config.module.rule('ts').uses.get('ts-loader').get('options'),
+          configFile: tsConfigPath,
+        }),
+    );
+    config.when(config.plugins.has('AngularWebpackPlugin'), (config) =>
+      config.plugin('AngularWebpackPlugin').tap((args) => {
+        args[0] = { ...args[0], tsconfig: tsConfigPath };
+        return args;
+      }),
+    );
   }
 
-  config.when(config.plugins.has('AngularWebpackPlugin'), (config) => config.plugin('AngularWebpackPlugin').tap((args) => {
-    args[0] = merge(args[0], { jitMode: true });
-    return args;
-  }));
+  // Angular unit tests require JIT: AOT compilation strips the metadata
+  // TestBed needs to override components/providers at runtime.
+  config.when(config.plugins.has('AngularWebpackPlugin'), (config) =>
+    config.plugin('AngularWebpackPlugin').tap((args) => {
+      args[0] = { ...args[0], jitMode: true };
+      return args;
+    }),
+  );
   config.when(config.module.rules.has('angular-webpack-loader'), (config) => {
-    const options = config.module
-      .rule('angular-webpack-loader')
-      .uses.get('webpack-loader').get('options');
-    config.module
-      .rule('angular-webpack-loader')
-      .uses.get('webpack-loader').options(
-        merge(options, { aot: false, optimize: false })
-      );
+    const rule = config.module.rule('angular-webpack-loader');
+    rule.uses
+      .get('webpack-loader')
+      .options({
+        ...rule.uses.get('webpack-loader').get('options'),
+        aot: false,
+        optimize: false,
+      });
   });
 
+  const testRunnerPort = Number(env.testRunnerPort);
   config.plugin('DefinePlugin').tap((args) => {
-    args[0] = merge(args[0], {
+    args[0] = {
+      ...args[0],
       'global.TNS_WEBPACK': true,
-    });
-
+      __NS_TEST_CONFIG__: JSON.stringify({
+        port: Number.isInteger(testRunnerPort) ? testRunnerPort : undefined,
+      }),
+    };
     return args;
   });
 
   if (env.codeCoverage) {
+    const entryDirPath = webpack.Utils.platform.getEntryDirPath();
+    // Device runtimes expose no V8 coverage APIs, so Istanbul instruments the
+    // bundle; the worker runtime forwards __VITEST_COVERAGE__ to the host,
+    // where @vitest/coverage-istanbul picks it up.
     config.module
-      .rule('istanbul-loader')
+      .rule('vitest-istanbul')
       .enforce('post')
-      .include
-      .add(webpack.Utils.platform.getEntryDirPath())
+      .test(/\.[cm]?[jt]sx?$/)
+      .include.add(entryDirPath)
       .end()
-      .exclude
-      .add(/\.spec\.(tsx?|jsx?)$/)
-      .add(join(webpack.Utils.platform.getEntryDirPath(), 'tests'))
-      .add(join(webpack.Utils.platform.getEntryDirPath(), 'test.ts'))
-      .add(join(webpack.Utils.platform.getEntryDirPath(), 'test.js'))
+      .exclude.add(/\.spec\.[cm]?[jt]sx?$/)
+      .add(join(entryDirPath, 'tests'))
+      .add(join(entryDirPath, 'test.ts'))
+      .add(join(entryDirPath, 'test.js'))
       .end()
-      .test(/\.(tsx?|jsx?)/)
-      .use('@jsdevtools/coverage-istanbul-loader')
-      .loader(require.resolve('@jsdevtools/coverage-istanbul-loader'))
-      .options({ esModules: true });
+      .use('babel-istanbul')
+      .loader(require.resolve('babel-loader'))
+      .options({
+        sourceMaps: true,
+        plugins: [
+          [
+            require.resolve('babel-plugin-istanbul'),
+            {
+              coverageVariable: '__VITEST_COVERAGE__',
+              coverageGlobalScope: 'globalThis',
+              coverageGlobalScopeFunc: false,
+            },
+          ],
+        ],
+      });
   }
 
-  // config.entryPoints.clear()
-  config.entry('bundle')
+  config
+    .entry('bundle')
     .clear()
     .add('@nativescript/core/globals/index.js')
     .add('@nativescript/core/bundle-entry-points')
-    // .add('@nativescript/unit-test-runner/app/bundle-app')
     .add(testEntrypointPath);
-  // .add('@nativescript/unit-test-runner/app/entry')
-  // .add(entryPath);
   if (webpack.Utils.platform.getPlatformName() === 'android') {
-    config.entry('bundle')
+    // The static binding generator needs these modules in the bundle to
+    // generate com.tns.NativeScriptActivity and its callbacks.
+    config
+      .entry('bundle')
       .add('@nativescript/core/ui/frame')
       .add('@nativescript/core/ui/frame/activity');
   }
