@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  normalizeNativeScriptPlatform,
   resolveNativeScriptPluginOptions,
   withNativeScriptCoverageLaunchCommand,
 } from './options.js';
@@ -72,6 +73,43 @@ describe('resolveNativeScriptPluginOptions', () => {
         mainThread: false,
       }),
     ).toThrow(RangeError);
+  });
+
+  it('targets visionOS with an ns run visionos launch command', () => {
+    const options = resolveNativeScriptPluginOptions(
+      { platform: 'visionos' },
+      '/workspace',
+      8,
+    );
+
+    expect(options.platform).toBe('visionos');
+    expect(options.adbReverse).toBe(false);
+    expect(options.launchCommand.args).toEqual([
+      'ns',
+      'run',
+      'visionos',
+      '--no-hmr',
+      '--env.unitTesting',
+      '--env.testRunnerPort=17878',
+    ]);
+  });
+
+  it('normalizes loose platform spellings from NS_PLATFORM and the CLI', () => {
+    expect(normalizeNativeScriptPlatform('iOS')).toBe('ios');
+    expect(normalizeNativeScriptPlatform('Android')).toBe('android');
+    expect(normalizeNativeScriptPlatform('visionOS')).toBe('visionos');
+    expect(normalizeNativeScriptPlatform('vision')).toBe('visionos');
+
+    expect(
+      resolveNativeScriptPluginOptions({ platform: 'visionOS' }, '/workspace', 8)
+        .platform,
+    ).toBe('visionos');
+  });
+
+  it('rejects unsupported platforms with the supported list', () => {
+    expect(() =>
+      resolveNativeScriptPluginOptions({ platform: 'windows' }),
+    ).toThrow(/Supported platforms: android, ios, visionos/);
   });
 
   it('reverses the runner port over adb for Android only', () => {

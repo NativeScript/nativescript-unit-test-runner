@@ -75,8 +75,9 @@ function delay(milliseconds: number): Promise<void> {
 /**
  * Candidate order matters: Android emulators reach the host only via
  * 10.0.2.2, while physical Android devices reach 127.0.0.1 through the
- * `adb reverse` mapping the host session establishes. iOS simulators share
- * the host loopback; physical iOS devices need an explicit `url`.
+ * `adb reverse` mapping the host session establishes. iOS and visionOS
+ * simulators share the host loopback; physical Apple devices need an
+ * explicit `url`.
  */
 export function defaultNativeScriptVitestUrls(
   port = DEFAULT_NATIVE_SCRIPT_VITEST_PORT,

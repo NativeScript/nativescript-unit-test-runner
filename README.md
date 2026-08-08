@@ -1,7 +1,7 @@
 # @nativescript/unit-test-runner
 
 Run [Vitest](https://vitest.dev) unit **and UI** tests inside real NativeScript
-runtimes on Android and iOS.
+runtimes on Android, iOS, and visionOS.
 
 Vitest stays on your machine as the orchestrator — configuration, CLI,
 reporters, `--ui`, coverage, and editor integrations all work as usual — while
@@ -15,7 +15,7 @@ full access to native APIs and the NativeScript UI layer.
 
 ```bash
 ns test init --framework vitest
-ns test ios       # or: ns test android
+ns test ios       # or: ns test android / ns test visionos
 ```
 
 Or run Vitest directly (what editor extensions and CI use):
@@ -48,7 +48,7 @@ import { nativeScript } from '@nativescript/unit-test-runner';
 export default defineConfig({
   plugins: [
     nativeScript({
-      platform: (process.env.NS_PLATFORM as 'android' | 'ios') || 'ios',
+      platform: process.env.NS_PLATFORM || 'ios', // 'android' | 'ios' | 'visionos'
       device: process.env.NS_DEVICE || undefined,
       // workers: 2,          // extra Worker runtimes for non-UI specs
       // mainThread: false,   // disable the UI-capable slot (workers only)
@@ -113,13 +113,13 @@ test: {
 
 | Target | Transport |
 | --- | --- |
-| iOS simulator | host loopback (`127.0.0.1`) |
+| iOS / visionOS simulator | host loopback (`127.0.0.1`) |
 | Android emulator | `10.0.2.2` → host loopback |
 | Physical Android | USB via automatic `adb reverse` |
-| Physical iOS | pass a LAN-reachable `url` to the coordinator in `test.ts` |
+| Physical iOS / Apple Vision Pro | pass a LAN-reachable `url` to the coordinator in `test.ts` |
 
 The host server binds `127.0.0.1` by default. Test builds on Android may need
-a scoped cleartext exception for `10.0.2.2`/`127.0.0.1`; on iOS,
+a scoped cleartext exception for `10.0.2.2`/`127.0.0.1`; on iOS and visionOS,
 `NSAllowsLocalNetworking`.
 
 ## Support matrix

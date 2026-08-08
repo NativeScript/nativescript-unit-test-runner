@@ -10,7 +10,36 @@ import { resolveNativeScriptWorkerCount } from '../threading.js';
 
 export { DEFAULT_NATIVE_SCRIPT_VITEST_PORT } from '../protocol.js';
 
-export type NativeScriptPlatform = 'android' | 'ios';
+export type NativeScriptPlatform = 'android' | 'ios' | 'visionos';
+
+/**
+ * Canonical platform ids plus the loose spellings that reach the plugin via
+ * NS_PLATFORM or the NativeScript CLI (`iOS`, `visionOS`, `vision`, ...).
+ */
+export type NativeScriptPlatformInput = NativeScriptPlatform | (string & {});
+
+const NATIVE_SCRIPT_PLATFORMS: readonly NativeScriptPlatform[] = [
+  'android',
+  'ios',
+  'visionos',
+];
+
+const NATIVE_SCRIPT_PLATFORM_ALIASES: Record<string, NativeScriptPlatform> = {
+  vision: 'visionos',
+};
+
+export function normalizeNativeScriptPlatform(
+  platform: NativeScriptPlatformInput,
+): NativeScriptPlatform {
+  const lowered = String(platform).toLowerCase();
+  const normalized = NATIVE_SCRIPT_PLATFORM_ALIASES[lowered] ?? lowered;
+  if (!NATIVE_SCRIPT_PLATFORMS.includes(normalized as NativeScriptPlatform)) {
+    throw new RangeError(
+      `Unknown NativeScript platform '${String(platform)}'. Supported platforms: ${NATIVE_SCRIPT_PLATFORMS.join(', ')}`,
+    );
+  }
+  return normalized as NativeScriptPlatform;
+}
 
 export interface NativeScriptLaunchCommand {
   command: string;
@@ -18,7 +47,7 @@ export interface NativeScriptLaunchCommand {
 }
 
 export interface NativeScriptPluginOptions {
-  platform: NativeScriptPlatform;
+  platform: NativeScriptPlatformInput;
   /** NativeScript app root (where nativescript.config.ts lives). Defaults to the Vitest root. */
   appPath?: string;
   /**
@@ -86,6 +115,7 @@ export function resolveNativeScriptPluginOptions(
   cwd = process.cwd(),
   parallelism = availableParallelism(),
 ): ResolvedNativeScriptPluginOptions {
+  const platform = normalizeNativeScriptPlatform(options.platform);
   const port = options.port ?? DEFAULT_NATIVE_SCRIPT_VITEST_PORT;
   if (!Number.isInteger(port) || port < 1 || port > 65_535) {
     throw new RangeError(
@@ -107,7 +137,7 @@ export function resolveNativeScriptPluginOptions(
   const defaultArgs = [
     'ns',
     'run',
-    options.platform,
+    platform,
     '--no-hmr',
     '--env.unitTesting',
     `--env.testRunnerPort=${port}`,
@@ -115,7 +145,7 @@ export function resolveNativeScriptPluginOptions(
   if (options.device) defaultArgs.push('--device', options.device);
 
   return {
-    platform: options.platform,
+    platform,
     appPath,
     slots,
     host: options.host ?? '127.0.0.1',
@@ -126,7 +156,7 @@ export function resolveNativeScriptPluginOptions(
       command: 'npx',
       args: defaultArgs,
     },
-    adbReverse: options.adbReverse ?? options.platform === 'android',
+    adbReverse: options.adbReverse ?? platform === 'android',
     adbPath: options.adbPath ?? 'adb',
     connectTimeout: options.connectTimeout ?? 120_000,
     include: options.include ?? DEFAULT_INCLUDE,

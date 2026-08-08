@@ -3,11 +3,13 @@ export type { NativeScriptPlugin } from './node/plugin.js';
 export type {
   NativeScriptLaunchCommand,
   NativeScriptPlatform,
+  NativeScriptPlatformInput,
   NativeScriptPluginOptions,
   ResolvedNativeScriptPluginOptions,
 } from './node/options.js';
 export {
   DEFAULT_NATIVE_SCRIPT_VITEST_PORT,
+  normalizeNativeScriptPlatform,
   resolveNativeScriptPluginOptions,
 } from './node/options.js';
 export type {
