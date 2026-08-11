@@ -1,15 +1,49 @@
 {
   "name": "@nativescript/unit-test-runner",
-  "version": "4.0.1",
-  "description": "NativeScript unit test runner",
-  "main": "app/main.js",
-  "types": "app/main.d.ts",
+  "version": "5.0.0-alpha.0",
+  "description": "Run Vitest unit and UI tests inside real NativeScript runtimes on Android and iOS.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./protocol": {
+      "types": "./dist/protocol.d.ts",
+      "default": "./dist/protocol.js"
+    },
+    "./runtime": {
+      "types": "./dist/runtime/index.d.ts",
+      "default": "./dist/runtime/index.js"
+    },
+    "./runtime/shim": {
+      "types": "./dist/runtime/shim.d.ts",
+      "default": "./dist/runtime/shim.js"
+    },
+    "./testing": {
+      "types": "./dist/testing/index.d.ts",
+      "default": "./dist/testing/index.js"
+    },
+    "./ui": {
+      "types": "./dist/ui/index.d.ts",
+      "default": "./dist/ui/index.js"
+    },
+    "./webpack": {
+      "require": "./nativescript.webpack.js",
+      "default": "./nativescript.webpack.js"
+    }
+  },
+  "files": [
+    "dist",
+    "nativescript.webpack.js",
+    "!**/*.tsbuildinfo"
+  ],
   "scripts": {
-    "clean": "npx rimraf hooks node_modules package-lock.json && npm run prepack",
-    "test": "./makeTestApp.sh",
-    "postinstall": "node postinstall.js",
-    "preuninstall": "node preuninstall.js",
-    "prepack": "npm i --ignore-scripts --legacy-peer-deps && tsc --removeComments --sourceMap false && tsc --removeComments --sourceMap false --project tsconfig.lib.json",
+    "build": "tsc -p tsconfig.build.json && node -e \"require('fs').writeFileSync('dist/package.json', JSON.stringify({ type: 'module' }, null, 2) + '\\n')\"",
+    "test": "vitest run",
+    "prepack": "npm run build",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
   "repository": {
@@ -18,40 +52,42 @@
   },
   "author": "NativeScript <oss@nativescript.org>",
   "license": "Apache-2.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "NativeScript",
+    "vitest",
+    "unit-testing",
+    "ui-testing",
+    "android",
+    "ios"
+  ],
+  "dependencies": {
+    "@vitest/expect": "~4.1.10",
+    "babel-loader": "^9.2.1",
+    "babel-plugin-istanbul": "^7.0.1",
+    "birpc": "^2.9.0",
+    "flatted": "^3.4.4",
+    "ws": "^8.18.3"
+  },
+  "peerDependencies": {
+    "@nativescript/core": ">=8.0.0",
+    "@vitest/runner": "~4.1.0",
+    "vitest": "~4.1.0"
+  },
+  "peerDependenciesMeta": {
+    "@nativescript/core": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@nativescript/core": "^9.0.0",
-    "@nativescript/types": "^9.0.0",
-    "@nativescript/webpack": "~5.0.25",
     "@types/node": "^22.0.0",
+    "@types/ws": "^8.18.1",
+    "@vitest/runner": "~4.1.10",
     "conventional-changelog-cli": "^5.0.0",
-    "rimraf": "^6.1.2",
-    "typescript": "~5.8.0"
-  },
-  "nativescript": {
-    "platforms": {
-      "android": "1.6.0",
-      "ios": "1.6.0"
-    },
-    "hooks": [
-      {
-        "type": "after-prepare",
-        "script": "./lib/after-prepare.js",
-        "inject": true
-      },
-      {
-        "type": "before-liveSync",
-        "script": "lib/before-liveSync.js",
-        "inject": true
-      },
-      {
-        "type": "before-build-task-args",
-        "script": "lib/before-build-task-args.js",
-        "inject": true
-      }
-    ]
-  },
-  "dependencies": {
-    "@nativescript/hook": "^3.0.0",
-    "glob-regex": "^0.3.2"
+    "typescript": "~5.8.0",
+    "vitest": "~4.1.10"
   }
 }

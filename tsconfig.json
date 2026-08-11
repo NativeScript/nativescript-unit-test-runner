@@ -1,25 +1,19 @@
 {
   "compilerOptions": {
-    "module": "esnext",
-    "target": "es2017",
-    "moduleResolution": "node",
-    "lib": [
-      "es6",
-      "dom"
-    ],
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022"],
+    "strict": true,
+    "declaration": true,
+    "declarationMap": false,
+    "sourceMap": false,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "noEmitHelpers": true,
-    "noEmitOnError": true
+    "noEmit": true,
+    "types": ["node"]
   },
-  "include": [
-    "app/**/*",
-    "declarations.d.ts",
-    "references.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "platforms"
-  ]
+  "include": ["src/**/*.ts", "vitest.config.mts"]
 }
