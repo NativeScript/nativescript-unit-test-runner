@@ -1,3 +1,10 @@
+# [5.0.0](https://github.com/NativeScript/nativescript-unit-test-runner/compare/v4.0.1...v5.0.0) (2026-08-27)
+
+
+### Features
+
+* vitest support ([#80](https://github.com/NativeScript/nativescript-unit-test-runner/issues/80)) ([5728ccc](https://github.com/NativeScript/nativescript-unit-test-runner/commit/5728ccc3088745212050c657800ce98880b36cbe))
+
 ## [4.0.1](https://github.com/NativeScript/nativescript-unit-test-runner/compare/v4.0.0...v4.0.1) (2025-12-03)
 
 

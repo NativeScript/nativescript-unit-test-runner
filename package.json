@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/unit-test-runner",
-  "version": "5.0.0-alpha.0",
+  "version": "5.0.0",
   "description": "Run Vitest unit and UI tests inside real NativeScript runtimes on Android and iOS.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
