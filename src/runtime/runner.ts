@@ -4,6 +4,8 @@ import type {
   Task,
   TaskEventPack,
   TaskResultPack,
+  Test,
+  TestContext,
   VitestRunner,
   VitestRunnerConfig,
 } from '@vitest/runner';
@@ -13,6 +15,13 @@ import type {
   NativeScriptTestEvent,
   NativeScriptTestState,
 } from '../protocol.js';
+import {
+  createNativeScriptExpect,
+  getNativeScriptExpect,
+  resetNativeScriptAssertions,
+  verifyNativeScriptAssertions,
+  type NativeScriptExpect,
+} from './expect.js';
 import type { NativeScriptTestModuleRegistry } from './registry.js';
 
 type EventSink = (event: NativeScriptTestEvent) => void;
@@ -66,6 +75,8 @@ function collectTestDescriptors(
 
 export class NativeScriptDeviceRunner implements VitestRunner {
   cancel?: (reason: CancelReason) => void;
+  /** The `expect` a test took from its context, once it takes one. */
+  private readonly testExpects = new WeakMap<Test, NativeScriptExpect>();
 
   constructor(
     public readonly config: VitestRunnerConfig,
@@ -96,6 +107,36 @@ export class NativeScriptDeviceRunner implements VitestRunner {
       files: files.map((file) => file.filepath),
       timestamp: Date.now(),
     });
+  }
+
+  extendTaskContext(context: TestContext): TestContext {
+    const test = context.task as Test;
+    Object.defineProperty(context, 'expect', {
+      configurable: true,
+      get: () => {
+        let expect = this.testExpects.get(test);
+        if (!expect) {
+          expect = createNativeScriptExpect(test);
+          this.testExpects.set(test, expect);
+        }
+        return expect;
+      },
+    });
+    return context;
+  }
+
+  onBeforeTryTask(): void {
+    resetNativeScriptAssertions(getNativeScriptExpect());
+  }
+
+  // As in Vitest, a test that uses its context's `expect` is checked on that
+  // one alone, which keeps concurrent tests from counting each other's calls.
+  // Only the global count is reset per attempt.
+  onAfterTryTask(test: Test): void {
+    verifyNativeScriptAssertions(
+      this.testExpects.get(test) ?? getNativeScriptExpect(),
+      this.state.config.expect?.requireAssertions === true,
+    );
   }
 
   onCleanupWorkerContext(cleanup: () => unknown): void {
