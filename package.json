@@ -30,6 +30,11 @@
       "types": "./dist/ui/index.d.ts",
       "default": "./dist/ui/index.js"
     },
+    "./vite": {
+      "types": "./dist/vite.d.ts",
+      "import": "./nativescript.vite.mjs",
+      "default": "./nativescript.vite.mjs"
+    },
     "./webpack": {
       "require": "./nativescript.webpack.js",
       "default": "./nativescript.webpack.js"
@@ -38,6 +43,7 @@
   "files": [
     "dist",
     "nativescript.webpack.js",
+    "nativescript.vite.mjs",
     "!**/*.tsbuildinfo"
   ],
   "scripts": {

@@ -29,8 +29,9 @@ NS_PLATFORM=ios npx vitest run
 - A Vitest plugin installs a custom pool that forwards Vitest's standard
   worker protocol over a WebSocket bridge (bound to `127.0.0.1`).
 - The plugin launches your app via `ns run <platform> --no-hmr
-  --env.unitTesting`; the webpack helper (auto-discovered from this package)
-  swaps the bundle entry to your `test.ts` for test builds only.
+  --env.unitTesting`; the bundler helper (Vite or Webpack, auto-discovered
+  from this package) swaps the bundle entry to your `test.ts` for test builds
+  only.
 - On device, a coordinator connects back to the host and executes specs:
   - **Main-thread context (default):** specs run on the UI thread, so they can
     create Views, navigate Frames, and use every NativeScript API.
@@ -61,6 +62,93 @@ export default defineConfig({
 
 Per-platform setups are possible with [Vitest projects](https://vitest.dev/guide/projects)
 — give each project its own `nativeScript({ platform })` plugin instance.
+
+## Test entrypoint (`test.ts`)
+
+When tests run on device, the app boots into `test.ts` instead of your normal app entry. The entrypoint registers test files with the device coordinator:
+
+### Vite projects
+
+Use `createViteTestRegistry` with Vite's lazy `import.meta.glob`:
+
+```ts
+/// <reference types="vite/client" />
+import { Application } from '@nativescript/core';
+import {
+  createViteTestRegistry,
+  NativeScriptVitestCoordinator,
+} from '@nativescript/unit-test-runner/runtime';
+import { createVitestHostPage } from '@nativescript/unit-test-runner/testing';
+import '@valor/nativescript-websockets';
+
+const coordinator = new NativeScriptVitestCoordinator({
+  // Keep glob imports lazy (do NOT use { eager: true });
+  // specs must be loaded on demand when Vitest executes them.
+  registry: createViteTestRegistry(
+    import.meta.glob('./**/*.{test,spec}.{js,ts}'),
+  ),
+});
+
+void coordinator.start();
+Application.run({ create: () => createVitestHostPage(coordinator) });
+```
+
+### Webpack projects
+
+Use `createWebpackTestRegistry` with Webpack's `require.context`:
+
+```ts
+import { Application } from '@nativescript/core';
+import {
+  createWebpackTestRegistry,
+  NativeScriptVitestCoordinator,
+} from '@nativescript/unit-test-runner/runtime';
+import { createVitestHostPage } from '@nativescript/unit-test-runner/testing';
+import '@valor/nativescript-websockets';
+
+const coordinator = new NativeScriptVitestCoordinator({
+  registry: createWebpackTestRegistry(
+    (require as any).context('./', true, /\.(test|spec)\.(js|ts)$/),
+  ),
+});
+
+void coordinator.start();
+Application.run({ create: () => createVitestHostPage(coordinator) });
+```
+
+### NativeScript-Vue projects
+
+When testing NativeScript-Vue components using `createNativeView`, `nativescript-vue` requires a root Vue application instance to be set so child components can inherit context (`app._context`):
+
+```ts
+import { createApp } from 'nativescript-vue';
+import { setRootApp } from 'nativescript-vue/dist/runtimeHelpers.js';
+
+const app = createApp({});
+// Register any global plugins / stores if needed:
+// app.use(pinia);
+setRootApp(app);
+```
+
+In your spec files:
+
+```ts
+import { describe, expect, it } from 'vitest';
+import { createNativeView } from 'nativescript-vue';
+import { mount, tap } from '@nativescript/unit-test-runner/testing';
+import AppHome from './AppHome.vue';
+
+describe('AppHome.vue', () => {
+  it('renders and increments on tap', async () => {
+    const node = createNativeView(AppHome);
+    node.mount();
+
+    const { view } = await mount(() => node.nativeView);
+    // interact and assert...
+  });
+});
+```
+
 
 ## UI testing
 
@@ -133,7 +221,7 @@ a scoped cleartext exception for `10.0.2.2`/`127.0.0.1`; on iOS and visionOS,
 | `vi.fn` / `vi.spyOn` / fake timers | 🚧 planned |
 | Snapshots | 🚧 planned |
 | Watch mode | 🚧 planned (one-shot `vitest run` today) |
-| `vi.mock` module mocking | ❌ not supported (webpack static bundle) — prefer DI |
+| `vi.mock` module mocking | ❌ not supported (static bundle) — prefer DI |
 
 ## Credits
 
