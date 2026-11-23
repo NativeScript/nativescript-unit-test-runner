@@ -13,6 +13,7 @@ interface DeviceAssertion {
 interface DeviceExpect extends NativeScriptExpect {
   (actual: unknown, message?: string): DeviceAssertion;
   objectContaining(sample: Record<string, unknown>): unknown;
+  assert(value: unknown, message?: string): void;
 }
 
 describe('setupNativeScriptExpect', () => {
@@ -36,5 +37,26 @@ describe('setupNativeScriptExpect', () => {
     deviceExpect(2).toBe(2);
 
     expect(deviceExpect.getState().assertionCalls).toBe(2);
+  });
+
+  it("provides Vitest's static expect helpers", () => {
+    const deviceExpect = setupNativeScriptExpect() as DeviceExpect;
+
+    expect(() => deviceExpect.unreachable('cleanup')).toThrow(
+      'expected "cleanup" not to be reached',
+    );
+    expect(() => deviceExpect.assert(false, 'not true')).toThrow('not true');
+
+    class Version {
+      constructor(readonly text: string) {}
+    }
+    deviceExpect.addEqualityTesters([
+      (a: unknown, b: unknown) =>
+        a instanceof Version && b instanceof Version
+          ? a.text.split('.').map(Number).join('.') ===
+            b.text.split('.').map(Number).join('.')
+          : undefined,
+    ]);
+    deviceExpect(new Version('1.02')).toEqual(new Version('1.2'));
   });
 });
