@@ -10,6 +10,7 @@ export type {
 export { createMainThreadWorkerHandle } from './loopback.js';
 export {
   createNativeScriptTestRegistry,
+  createViteTestRegistry,
   createWebpackTestRegistry,
 } from './registry.js';
 export type {

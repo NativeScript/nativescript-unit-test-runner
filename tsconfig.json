@@ -15,5 +15,5 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["src/**/*.ts", "vitest.config.mts"]
+  "include": ["src/**/*.ts", "vitest.config.mts", "nativescript.vite.mjs"],
 }
