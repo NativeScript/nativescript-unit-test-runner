@@ -165,3 +165,14 @@ describe('resolveNativeScriptPluginOptions', () => {
     );
   });
 });
+
+
+describe('tvOS', () => {
+  it('accepts CLI casing and launches the tvOS platform without adb', () => {
+    const options = resolveNativeScriptPluginOptions({ platform: 'tvOS', device: 'apple-tv' });
+    expect(options.platform).toBe('tvos');
+    expect(options.launchCommand.args).toContain('tvos');
+    expect(options.launchCommand.args).toContain('apple-tv');
+    expect(options.adbReverse).toBe(false);
+  });
+});

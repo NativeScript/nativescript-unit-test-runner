@@ -10,7 +10,7 @@ import { resolveNativeScriptWorkerCount } from '../threading.js';
 
 export { DEFAULT_NATIVE_SCRIPT_VITEST_PORT } from '../protocol.js';
 
-export type NativeScriptPlatform = 'android' | 'ios' | 'visionos';
+export type NativeScriptPlatform = 'android' | 'ios' | 'visionos' | 'tvos';
 
 /**
  * Canonical platform ids plus the loose spellings that reach the plugin via
@@ -22,6 +22,7 @@ const NATIVE_SCRIPT_PLATFORMS: readonly NativeScriptPlatform[] = [
   'android',
   'ios',
   'visionos',
+  'tvos',
 ];
 
 const NATIVE_SCRIPT_PLATFORM_ALIASES: Record<string, NativeScriptPlatform> = {
